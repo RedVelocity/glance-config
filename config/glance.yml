@@ -1,0 +1,111 @@
+server:
+  assets-path: /app/assets
+
+branding:
+  hide-footer: true
+
+theme:
+  background-color: 225 14 15
+  primary-color: 157 47 65
+  contrast-multiplier: 1.1
+  disable-picker: true
+  custom-css-file: /assets/global.css
+
+pages:
+  - name: Home
+    # Optionally, if you only have a single page you can hide the desktop navigation for a cleaner look
+    # hide-desktop-navigation: true
+    columns:
+      - size: small
+        widgets:
+          - type: calendar
+            first-day-of-week: sunday
+
+          - type: clock
+            hour-format: 24h
+            timezones:
+              - timezone: Asia/Kolkata
+                label: Bengaluru
+
+          - type: html
+            cache: 10m
+            source: |
+              <iframe
+                src="https://api.wo-cloud.com/content/widget/?geoObjectKey=15339767&language=en&region=GB&timeFormat=HH:mm&windUnit=kmh&systemOfMeasurement=metric&temperatureUnit=celsius"
+                name="CW2"
+                title="Weather widget"
+                frameborder="0"
+                width="100%"
+                height="318"
+                style="border-radius:8px; margin-top:2rem;" ></iframe>
+
+      - size: full
+        widgets:
+          - type: split-column
+            widgets:
+              - $include: prowlarr.yml
+                css-class: widget-type-prowlarr-custom
+              - type: dns-stats
+                cache: 5m
+                service: adguard
+                url: https://ag.${BASE_HOST}/
+                hide-top-domains: true
+                username: ${AG_USER}
+                password: ${AG_PASSWORD}
+
+          - type: monitor
+            cache: 1m
+            hide-header: true
+            title: Services
+            sites:
+              - title: Jellyfin
+                url: https://jelly.${BASE_HOST}/
+                icon: sh:jellyfin
+              - title: Jellyseerr
+                url: https://js.${BASE_HOST}/
+                icon: sh:jellyseerr
+              - title: Radarr
+                url: https://rad.${BASE_HOST}/
+                icon: sh:radarr
+              - title: Sonarr
+                url: https://son.${BASE_HOST}/
+                icon: sh:sonarr
+              - title: Prowlarr
+                url: https://prowl.${BASE_HOST}/
+                icon: sh:prowlarr
+              - title: qBittorrent # only for Linux ISOs, of course
+                url: https://qb.${BASE_HOST}/
+                icon: sh:qbittorrent
+              - title: AdGuard Home
+                url: https://ag.${BASE_HOST}/
+                icon: sh:adguard-home
+              - title: Komodo
+                url: https://komo.${BASE_HOST}/
+                icon: sh:komodo-light
+              - title: Portainer
+                url: https://portainer.${BASE_HOST}/
+                icon: sh:portainer
+              - title: Backrest
+                url: https://backrest.${BASE_HOST}/
+                icon: sh:backrest-light
+          - $include: qb.yml
+
+      - size: small
+        widgets:
+          - $include: media-server.yml
+          - $include: seerr.yml
+
+  # Add more pages here:
+  # - name: Your page name
+  #   columns:
+  #     - size: small
+  #       widgets:
+  #         # Add widgets here
+
+  #     - size: full
+  #       widgets:
+  #         # Add widgets here
+
+  #     - size: small
+  #       widgets:
+  #         # Add widgets here
