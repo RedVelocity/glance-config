@@ -2,6 +2,8 @@
   cache: 10s
   title: qBittorrent
   hide-header: true
+  options:
+    collapse-after: ${QBIT_COLLAPSE_AFTER}
   subrequests:
     transfer:
       url: http://${QBIT_HOST}/api/v2/transfer/info
@@ -14,6 +16,7 @@
       parameters:
         filter: downloading
   template: |
+    {{ $collapseAfter := .Options.IntOr "collapse-after" 3 }}
     {{ $transfer := .Subrequest "transfer" }}
     {{ $seeding := .Subrequest "seeding" }}
     {{ $leeching := .Subrequest "leeching" }}
@@ -33,22 +36,22 @@
         {{/* Downloading list */}}
         {{ $downloadingTorrents := $leeching.JSON.Array "" }}
         {{ if gt (len $downloadingTorrents) 0 }}
-          <ul class="list collapsible-container" data-collapse-after="3" style="--list-gap:15px; margin:0; padding:0; list-style:none; margin-top:6px;">
+          <ul class="list collapsible-container" data-collapse-after={{ $collapseAfter }} style="--list-gap:15px; margin:0; padding:0; list-style:none; margin-top:6px;">
             {{ range $t := $downloadingTorrents }}
               {{ $state := $t.String "state" }}
-              {{ if or (eq $state "downloading") (eq $state "forcedDL") }}
-                {{/* Active downloading */}}
+              {{ if or (eq $state "downloading") (eq $state "forcedDL") (eq $state "metaDL") }}
+                {{/* Active downloading or metadata downloading */}}
                 <li style="border-bottom:0.5px solid #3B404E; padding:10px 0;">
                   <div style="display:grid; grid-template-columns:40px 1.2fr 1fr 100px 80px 80px 80px; gap:8px; align-items:center; width:100%;">
                     <span>↓</span>
                     <span title="{{ $t.String "name" }}" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $t.String "name" }}</span>
                     <div style="display:flex; align-items:center; gap:8px;">
                       <div style="background: rgba(128,128,128,0.12); height:8px; border-radius:4px; width:100%;">
-                        <div style="width: {{ $t.Float "progress" | mul 100 }}%; background-color: var(--color-positive); height:100%; border-radius:4px;"></div>
+                        <div style="width: {{ $t.Float "progress" | mul 100 }}%; background-color: {{ if lt ($t.Float "progress") 1.0 }}var(--color-info){{ else }}var(--color-positive){{ end }}; height:100%; border-radius:4px;"></div>
                       </div>
                       <span style="min-width:48px;">{{ $t.Float "progress" | mul 100 | printf "%.1f" }}%</span>
                     </div>
-                    <span>downloading</span>
+                    <span>{{ if eq $state "metaDL" }}metadata downloading{{ else }}downloading{{ end }}</span>
                     <span>
                       {{ $size := $t.Float "size" }}
                       {{ if lt $size 1073741824.0 }}
@@ -113,7 +116,7 @@
         {{/* Seeding / uploading list */}}
         {{ $seedingTorrents := $seeding.JSON.Array "" }}
         {{ if gt (len $seedingTorrents) 0 }}
-          <ul class="list collapsible-container" data-collapse-after="3" style="--list-gap:15px; margin:0; padding:0; list-style:none;">
+          <ul class="list collapsible-container" data-collapse-after={{ $collapseAfter }} style="--list-gap:15px; margin:0; padding:0; list-style:none;">
             {{/* Active seeding */}}
             {{ range $t := $seedingTorrents }}
               {{ $state := $t.String "state" }}

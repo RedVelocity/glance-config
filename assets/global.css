@@ -1,10 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 
-html,
+:root {
+  --color-info: hsl(43, 50%, 70%);
+  --color-warning: hsl(43, 50%, 70%);
+}
+
 body {
   font-family: 'Outfit', sans-serif;
   background-image: url(https://i.redd.it/luto9s1t3oxf1.jpeg);
-  /* backdrop-filter: blur(2px); */
+  backdrop-filter: blur(2px);
   background-repeat: no-repeat;
   background-size: cover;
 }

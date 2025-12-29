@@ -5,12 +5,10 @@
   options:
     base-url: https://js.${BASE_HOST}
     api-key: ${SEERR_API_KEY}
-    tmdb-api-key: ${TMDB_API_KEY}
     limit: 10
   template: |
     {{ $baseURL := .Options.StringOr "base-url" "" }}
     {{ $apiKey := .Options.StringOr "api-key" "" }}
-    {{ $tmdbKey := .Options.StringOr "tmdb-api-key" "" }}
     {{ $limit := .Options.IntOr "limit" 10 }}
 
     {{ define "errorMsg" }}
@@ -20,8 +18,8 @@
       <p class="break-all">{{ . }}</p>
     {{ end }}
 
-    {{ if or (eq $baseURL "") (eq $apiKey "") (eq $tmdbKey "") }}
-      {{ template "errorMsg" "Missing Jellyseerr base-url, api-key, or TMDB API key" }}
+    {{ if or (eq $baseURL "") (eq $apiKey "") }}
+      {{ template "errorMsg" "Missing Jellyseerr base-url or api-key" }}
     {{ else }}
       {{ $req := newRequest (concat $baseURL "/api/v1/request")
         | withHeader "X-Api-Key" $apiKey
@@ -40,17 +38,19 @@
               {{ if lt $i $limit }}
 
                 {{ $type := $item.String "type" }}
-                {{ $status := $item.Int "status" }}
+                {{ $status := $item.Int "media.status" }}
                 {{ $requestedBy := $item.String "requestedBy.displayName" }}
                 {{ $tmdbId := $item.Int "media.tmdbId" }}
                 {{ $mediaType := $item.String "media.mediaType" }}
 
                 {{ $statusText := "Unknown" }}
-                {{ $statusColor := "var(--color-neutral)" }}
+                {{ $statusColor := "var(--color-background)" }}
                 {{ if eq $status 2 }} {{ $statusText = "Pending" }} {{ $statusColor = "var(--color-warning)" }}
                 {{ else if eq $status 3 }} {{ $statusText = "Processing" }} {{ $statusColor = "var(--color-info)" }}
-                {{ else if eq $status 4 }} {{ $statusText = "Partial" }} {{ $statusColor = "var(--color-primary)" }}
+                {{ else if eq $status 4 }} {{ $statusText = "Partial" }} {{ $statusColor = "var(--color-positive)" }}
                 {{ else if eq $status 5 }} {{ $statusText = "Available" }} {{ $statusColor = "var(--color-positive)" }}
+                {{ else if eq $status 6 }} {{ $statusText = "Declined" }} {{ $statusColor = "var(--color-negative)" }}
+                {{ else if eq $status 7 }} {{ $statusText = "Deleted" }} {{ $statusColor = "var(--color-negative)" }}
                 {{ end }}
 
                 {{ $title := $item.String "media.externalServiceSlug" }}
@@ -58,8 +58,8 @@
                 {{ $backdropPath := "" }}
 
                 {{ if and $tmdbId (gt $tmdbId 0) }}
-                  {{ $tmdbReq := newRequest (concat "https://api.themoviedb.org/3/" $mediaType "/" (printf "%d" $tmdbId))
-                    | withHeader "Authorization" (concat "Bearer " $tmdbKey)
+                  {{ $tmdbReq := newRequest (concat $baseURL "/api/v1/" $mediaType "/" (printf "%d" $tmdbId))
+                    | withHeader "X-Api-Key" $apiKey
                     | withHeader "Accept" "application/json"
                     | getResponse }}
                   {{ if eq $tmdbReq.Response.StatusCode 200 }}
@@ -67,8 +67,8 @@
                     {{ $tmdbTitle := $tmdbJSON.String "title" }}
                     {{ if eq $tmdbTitle "" }} {{ $tmdbTitle = $tmdbJSON.String "name" }} {{ end }}
                     {{ if ne $tmdbTitle "" }} {{ $title = $tmdbTitle }} {{ end }}
-                    {{ $posterPath = $tmdbJSON.String "poster_path" }}
-                    {{ $backdropPath = $tmdbJSON.String "backdrop_path" }}
+                    {{ $posterPath = $tmdbJSON.String "posterPath" }}
+                    {{ $backdropPath = $tmdbJSON.String "backdropPath" }}
                   {{ end }}
                 {{ end }}
 
@@ -77,7 +77,7 @@
                 {{ if $posterPath }} {{ $posterURL = concat "https://image.tmdb.org/t/p/w342" $posterPath }} {{ end }}
                 {{ if $backdropPath }} {{ $backdropURL = concat "https://image.tmdb.org/t/p/w780" $backdropPath }} {{ end }}
 
-                <div class="card widget-content-frame" style="{{ if $backdropURL }}background-image: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('{{ $backdropURL }}'); background-size: cover; background-position: center;{{ end }}">
+                <div class="card widget-content-frame" style="{{ if $backdropURL }}background-image: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.80)), url('{{ $backdropURL }}'); background-size: cover; background-position: center;{{ end }};">
 
                   <div class="flex gap-12">
                     {{ if $posterURL }}
@@ -85,13 +85,13 @@
                     {{ end }}
 
                     <div class="flex flex-column justify-evenly grow">
-                      <div class="size-title-dynamic color-highlight growsize-title-dynamic">
+                      <a href="{{$baseURL}}/{{ $type }}/{{ $tmdbId }}" target="_blank" class="size-title-dynamic color-highlight growsize-title-dynamic">
                         <span title="{{ $title }}" style="text-wrap:auto;">{{ $title }}</span>
-                      </div>
+                      </a>
 
                       <div class="list-horizontal-text">
-                        <span>{{ $type }}</span>
-                        <span style="background-color: {{ $statusColor }};">
+                        <span style="text-transform: capitalize;">{{ $type }}</span>
+                        <span style="background-color: var(--color-background); padding-inline: 4px; border-radius: var(--border-radius);">
                           {{ $statusText }}
                         </span>
                       </div>

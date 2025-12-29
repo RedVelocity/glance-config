@@ -85,9 +85,9 @@ pages:
               - title: Portainer
                 url: https://portainer.${BASE_HOST}/
                 icon: sh:portainer
-              - title: Backrest
-                url: https://backrest.${BASE_HOST}/
-                icon: sh:backrest-light
+              # - title: Backrest
+              #   url: https://backrest.${BASE_HOST}/
+              #   icon: sh:backrest-light
           - $include: qb.yml
 
       - size: small
