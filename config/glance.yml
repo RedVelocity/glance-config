@@ -5,9 +5,11 @@ branding:
   hide-footer: true
 
 theme:
-  background-color: 225 14 15
-  primary-color: 157 47 65
-  contrast-multiplier: 1.1
+  background-color: 203 27 9
+  contrast-multiplier: 1.2
+  primary-color: 165 78 51
+  positive-color: 165 78 51
+  negative-color: 360 100 71
   disable-picker: true
   custom-css-file: /assets/global.css
 

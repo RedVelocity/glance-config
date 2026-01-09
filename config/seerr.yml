@@ -1,15 +1,17 @@
 - type: custom-api
   title: Jellyseerr Requests
   frameless: true
-  cache: 5m
+  cache: 10m
   options:
     base-url: https://js.${BASE_HOST}
     api-key: ${SEERR_API_KEY}
     limit: 10
+    height: 450
   template: |
     {{ $baseURL := .Options.StringOr "base-url" "" }}
     {{ $apiKey := .Options.StringOr "api-key" "" }}
     {{ $limit := .Options.IntOr "limit" 10 }}
+    {{ $height := .Options.IntOr "height" 450 }}
 
     {{ define "errorMsg" }}
       <div class="widget-error-header">
@@ -31,7 +33,7 @@
       {{ else }}
         {{ $items := $req.JSON.Array "results" }}
 
-        <div class="carousel-container" style="height: 450px; overflow-y:scroll; overflow-x: clip">
+        <div class="carousel-container" style="height: {{ $height }}px; overflow-y:scroll; overflow-x: clip">
           <div class="cards-vertical carousel-items-container">
 
             {{ range $i, $item := $items }}
@@ -90,7 +92,7 @@
                       </a>
 
                       <div class="list-horizontal-text">
-                        <span style="text-transform: capitalize;">{{ $type }}</span>
+                        <span>{{ if eq $type "tv" }}TV{{ else }}Movie{{ end }}</span>
                         <span style="background-color: var(--color-background); padding-inline: 4px; border-radius: var(--border-radius);">
                           {{ $statusText }}
                         </span>

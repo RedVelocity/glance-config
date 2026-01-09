@@ -3,20 +3,38 @@
 :root {
   --color-info: hsl(43, 50%, 70%);
   --color-warning: hsl(43, 50%, 70%);
+  /* Widget background color with alpha */
+  --bga: 70%;
+  --color-widget-background: hsl(
+    var(--color-widget-background-hsl-values),
+    var(--bga)
+  );
 }
 
+* {
+  box-sizing: border-box;
+}
 body {
   font-family: 'Outfit', sans-serif;
-  background-image: url(https://i.redd.it/luto9s1t3oxf1.jpeg);
-  backdrop-filter: blur(2px);
+  background-image: url(https://images.pexels.com/photos/2098428/pexels-photo-2098428.jpeg);
+  /* backdrop-filter: blur(2px); */
   background-repeat: no-repeat;
   background-size: cover;
 }
+/* Blur effect for widget backgrounds */
+.widget-content:not(.widget-content-frameless),
+.widget-content-frame {
+  backdrop-filter: blur(5px);
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+}
+
+/* Make widgets same height */
 .widget-type-dns-stats {
   height: 100%;
 }
 .widget-type-dns-stats .widget-content {
-  height: 90%;
+  height: calc(100% - var(--widget-gap));
 }
 .widget-type-dns-stats .widget-content .dns-stats {
   height: 100%;
@@ -24,7 +42,6 @@ body {
   flex-direction: column;
   justify-content: space-around;
 }
-
 .widget-type-prowlarr-custom .widget-content {
-  height: 90%;
+  height: calc(100% - var(--widget-gap));
 }
