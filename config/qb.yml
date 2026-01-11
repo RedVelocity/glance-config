@@ -20,16 +20,11 @@
     {{ $seeding := .Subrequest "seeding" }}
     {{ $leeching := .Subrequest "leeching" }}
     {{ $collapseAfter := .Options.IntOr "collapse-after" 4 }}
-    {{ $downloadingTorrents := $leeching.JSON.Array "" }}
-    {{ $seedingTorrents := $seeding.JSON.Array "" }}
-    {{ $dlCount := len $downloadingTorrents }}
-    {{ $ulCount := len $seedingTorrents }}
-    {{ $dlCollapse := (sub $collapseAfter $ulCount) }}
-    {{ if lt $dlCollapse 1 }}{{ $dlCollapse = 1 }}{{ end }}
-    {{ $ulCollapse := (sub $collapseAfter $dlCount) }}
-    {{ if lt $ulCollapse 1 }}{{ $ulCollapse = 1 }}{{ end }}
 
     {{ if and (eq $transfer.Response.StatusCode 200) (eq $seeding.Response.StatusCode 200) (eq $leeching.Response.StatusCode 200) }}
+      {{ $downloadingTorrents := $leeching.JSON.Array "" }}
+      {{ $seedingTorrents := $seeding.JSON.Array "" }}
+      
       <div class="list" style="--list-gap:15px;">
         <div style="display:grid; grid-template-columns:40px 1.2fr 1fr 100px 80px 80px 80px; gap:8px; padding:8px 0; border-bottom:1px solid #3B404E; font-weight:700; align-items:center;">
           <span></span>
@@ -41,13 +36,101 @@
           <span>Speed</span>
         </div>
 
-        {{/* Downloading list */}}
-        {{ if gt $dlCount 0 }}
-          <ul class="list collapsible-container" data-collapse-after={{ $dlCollapse }} style="--list-gap:15px; margin:0; padding:0; list-style:none; margin-top:6px;">
-            {{ range $t := $downloadingTorrents }}
-              {{ $state := $t.String "state" }}
+        <ul class="list collapsible-container" data-collapse-after={{ $collapseAfter }} style="--list-gap:15px; margin:0; padding:0; list-style:none; margin-top:6px;">
+          {{/* Active downloading torrents first */}}
+          {{ range $t := $downloadingTorrents }}
+            {{ $state := $t.String "state" }}
+            {{ $dlSpeed := $t.Float "dlspeed" }}
+            {{ if and $dlSpeed (or (eq $state "downloading") (eq $state "metaDL") (eq $state "forcedDL")) }}
+              {{ if gt $dlSpeed 0.0 }}
+                  {{ $status := $state }}
+                  {{ if eq $state "metaDL" }}{{ $status = "metadata" }}{{ else if or (eq $state "stalledUP") (eq $state "stalledDL") }}{{ $status = "stalled" }}{{ else if or (eq $state "pausedUP") (eq $state "pausedDL") }}{{ $status = "paused" }}{{ else if or (eq $state "stoppedUP") (eq $state "stoppedDL") }}{{ $status = "stopped" }}{{ else if or (eq $state "queuedUP") (eq $state "queuedDL") }}{{ $status = "queued" }}{{ else if or (eq $state "error") (eq $state "missingFiles") }}{{ $status = "error" }}{{ else if or (eq $state "checkingUP") (eq $state "checkingDL") (eq $state "checkingResumeData") (eq $state "allocating") }}{{ $status = "checking" }}{{ end }}
+                  
+                  <li style="border-bottom:0.5px solid #3B404E; padding:10px 0;">
+                    <div style="display:grid; grid-template-columns:40px 1.2fr 1fr 100px 80px 80px 80px; gap:8px; align-items:center; width:100%;">
+                      <span>↓</span>
+                      <span title="{{ $t.String "name" }}" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $t.String "name" }}</span>
+                      <div style="display:flex; align-items:center; gap:8px;">
+                        <div style="background: rgba(128,128,128,0.12); height:8px; border-radius:4px; width:100%;">
+                          <div style="width: {{ $t.Float "progress" | mul 100 }}%; background-color: {{ if lt ($t.Float "progress") 1.0 }}var(--color-info){{ else }}var(--color-positive){{ end }}; height:100%; border-radius:4px;"></div>
+                        </div>
+                        <span style="min-width:48px;">{{ $t.Float "progress" | mul 100 | printf "%.1f" }}%</span>
+                      </div>
+                      <span style="text-transform: capitalize;">{{ $status }}</span>
+                      <span>
+                        {{ $size := $t.Float "size" }}
+                        {{ if lt $size 1073741824.0 }}
+                          {{ printf "%.1f MB" (div $size 1048576.0) }}
+                        {{ else }}
+                          {{ printf "%.1f GB" (div $size 1073741824.0) }}
+                        {{ end }}
+                      </span>
+                      <span>{{ printf "%.2f" ($t.Float "ratio") }}</span>
+                      <span style="width:80px;">
+                        {{ if lt $dlSpeed 1000.0 }}-- KB/s
+                        {{ else if lt $dlSpeed 1000000.0 }}{{ printf "%.0f KB/s" (div $dlSpeed 1000.0) }}
+                        {{ else }}{{ printf "%.1f MB/s" (div $dlSpeed 1000000.0) }}{{ end }}
+                      </span>
+                    </div>
+                  </li>
+              {{ end }}
+            {{ end }}
+          {{ end }}
+          
+          {{/* Active seeding torrents second */}}
+          {{ range $t := $seedingTorrents }}
+            {{ $state := $t.String "state" }}
+            {{ $ulSpeed := $t.Float "upspeed" }}
+            {{ if and $ulSpeed (or (eq $state "uploading") (eq $state "stalledUP") (eq $state "forcedUP")) }}
+              {{ if gt $ulSpeed 0.0 }}
+                  {{ $status := $state }}
+                  {{ if eq $state "metaDL" }}{{ $status = "metadata" }}{{ else if or (eq $state "stalledUP") (eq $state "stalledDL") }}{{ $status = "stalled" }}{{ else if or (eq $state "pausedUP") (eq $state "pausedDL") }}{{ $status = "paused" }}{{ else if or (eq $state "stoppedUP") (eq $state "stoppedDL") }}{{ $status = "stopped" }}{{ else if or (eq $state "queuedUP") (eq $state "queuedDL") }}{{ $status = "queued" }}{{ else if or (eq $state "error") (eq $state "missingFiles") }}{{ $status = "error" }}{{ else if or (eq $state "checkingUP") (eq $state "checkingDL") (eq $state "checkingResumeData") (eq $state "allocating") }}{{ $status = "checking" }}{{ end }}
+                  
+                  <li style="border-bottom:0.5px solid #3B404E; padding:10px 0;">
+                    <div style="display:grid; grid-template-columns:40px 1.2fr 1fr 100px 80px 80px 80px; gap:8px; align-items:center; width:100%;">
+                      <span>↑</span>
+                      <span title="{{ $t.String "name" }}" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $t.String "name" }}</span>
+                      <div style="display:flex; align-items:center; gap:8px;">
+                        <div style="background: rgba(128,128,128,0.12); height:8px; border-radius:4px; width:100%;">
+                          <div style="width: {{ $t.Float "progress" | mul 100 }}%; background-color: {{ if lt ($t.Float "progress") 1.0 }}var(--color-info){{ else }}var(--color-positive){{ end }}; height:100%; border-radius:4px;"></div>
+                        </div>
+                        <span style="min-width:48px;">{{ $t.Float "progress" | mul 100 | printf "%.1f" }}%</span>
+                      </div>
+                      <span style="text-transform: capitalize;">{{ $status }}</span>
+                      <span>
+                        {{ $size := $t.Float "size" }}
+                        {{ if lt $size 1073741824.0 }}
+                          {{ printf "%.1f MB" (div $size 1048576.0) }}
+                        {{ else }}
+                          {{ printf "%.1f GB" (div $size 1073741824.0) }}
+                        {{ end }}
+                      </span>
+                      <span>{{ printf "%.2f" ($t.Float "ratio") }}</span>
+                      <span style="width:80px;">
+                        {{ if lt $ulSpeed 1000.0 }}-- KB/s
+                        {{ else if lt $ulSpeed 1000000.0 }}{{ printf "%.0f KB/s" (div $ulSpeed 1000.0) }}
+                        {{ else }}{{ printf "%.1f MB/s" (div $ulSpeed 1000000.0) }}{{ end }}
+                      </span>
+                    </div>
+                  </li>
+              {{ end }}
+            {{ end }}
+          {{ end }}
+          
+          {{/* Inactive downloading torrents third */}}
+          {{ range $t := $downloadingTorrents }}
+            {{ $state := $t.String "state" }}
+            {{ $dlSpeed := $t.Float "dlspeed" }}
+            {{ $isActive := false }}
+            {{ if and $dlSpeed (or (eq $state "downloading") (eq $state "metaDL") (eq $state "forcedDL")) }}
+              {{ if gt $dlSpeed 0.0 }}
+                {{ $isActive = true }}
+              {{ end }}
+            {{ end }}
+            {{ if not $isActive }}
               {{ $status := $state }}
-              {{ if or (eq $state "stalledUP") (eq $state "stalledDL") }}{{ $status = "stalled" }}{{ else if or (eq $state "pausedUP") (eq $state "pausedDL") }}{{ $status = "paused" }}{{ else if or (eq $state "stoppedUP") (eq $state "stoppedDL") }}{{ $status = "stopped" }}{{ else if or (eq $state "queuedUP") (eq $state "queuedDL") }}{{ $status = "queued" }}{{ else if or (eq $state "error") (eq $state "missingFiles") }}{{ $status = "error" }}{{ else if or (eq $state "checkingUP") (eq $state "checkingDL") (eq $state "checkingResumeData") (eq $state "allocating") }}{{ $status = "checking" }}{{ end }}
+              {{ if eq $state "metaDL" }}{{ $status = "metadata" }}{{ else if or (eq $state "stalledUP") (eq $state "stalledDL") }}{{ $status = "stalled" }}{{ else if or (eq $state "pausedUP") (eq $state "pausedDL") }}{{ $status = "paused" }}{{ else if or (eq $state "stoppedUP") (eq $state "stoppedDL") }}{{ $status = "stopped" }}{{ else if or (eq $state "queuedUP") (eq $state "queuedDL") }}{{ $status = "queued" }}{{ else if or (eq $state "error") (eq $state "missingFiles") }}{{ $status = "error" }}{{ else if or (eq $state "checkingUP") (eq $state "checkingDL") (eq $state "checkingResumeData") (eq $state "allocating") }}{{ $status = "checking" }}{{ end }}
+              
               <li style="border-bottom:0.5px solid #3B404E; padding:10px 0;">
                 <div style="display:grid; grid-template-columns:40px 1.2fr 1fr 100px 80px 80px 80px; gap:8px; align-items:center; width:100%;">
                   <span>↓</span>
@@ -69,24 +152,31 @@
                   </span>
                   <span>{{ printf "%.2f" ($t.Float "ratio") }}</span>
                   <span style="width:80px;">
-                    {{ $dlSpeed := $t.Float "dlspeed" }}
-                    {{ if lt $dlSpeed 1000.0 }}-- KB/s
-                    {{ else if lt $dlSpeed 1000000.0 }}{{ printf "%.0f KB/s" (div $dlSpeed 1000.0) }}
-                    {{ else }}{{ printf "%.1f MB/s" (div $dlSpeed 1000000.0) }}{{ end }}
+                    {{ if $dlSpeed }}
+                      {{ if lt $dlSpeed 1000.0 }}-- KB/s
+                      {{ else if lt $dlSpeed 1000000.0 }}{{ printf "%.0f KB/s" (div $dlSpeed 1000.0) }}
+                      {{ else }}{{ printf "%.1f MB/s" (div $dlSpeed 1000000.0) }}{{ end }}
+                    {{ else }}-- KB/s{{ end }}
                   </span>
                 </div>
               </li>
             {{ end }}
-          </ul>
-        {{ end }}
-
-        {{/* Seeding / uploading list */}}
-        {{ if gt $ulCount 0 }}
-          <ul class="list collapsible-container" data-collapse-after={{ $ulCollapse }} style="--list-gap:15px; margin:0; padding:0; list-style:none;">
-            {{ range $t := $seedingTorrents }}
-              {{ $state := $t.String "state" }}
+          {{ end }}
+          
+          {{/* Inactive seeding torrents last */}}
+          {{ range $t := $seedingTorrents }}
+            {{ $state := $t.String "state" }}
+            {{ $ulSpeed := $t.Float "upspeed" }}
+            {{ $isActive := false }}
+            {{ if and $ulSpeed (or (eq $state "uploading") (eq $state "stalledUP") (eq $state "forcedUP")) }}
+              {{ if gt $ulSpeed 0.0 }}
+                {{ $isActive = true }}
+              {{ end }}
+            {{ end }}
+            {{ if not $isActive }}
               {{ $status := $state }}
-              {{ if or (eq $state "stalledUP") (eq $state "stalledDL") }}{{ $status = "stalled" }}{{ else if or (eq $state "pausedUP") (eq $state "pausedDL") }}{{ $status = "paused" }}{{ else if or (eq $state "stoppedUP") (eq $state "stoppedDL") }}{{ $status = "stopped" }}{{ else if or (eq $state "queuedUP") (eq $state "queuedDL") }}{{ $status = "queued" }}{{ else if or (eq $state "error") (eq $state "missingFiles") }}{{ $status = "error" }}{{ else if or (eq $state "checkingUP") (eq $state "checkingDL") (eq $state "checkingResumeData") (eq $state "allocating") }}{{ $status = "checking" }}{{ end }}
+              {{ if eq $state "metaDL" }}{{ $status = "metadata" }}{{ else if or (eq $state "stalledUP") (eq $state "stalledDL") }}{{ $status = "stalled" }}{{ else if or (eq $state "pausedUP") (eq $state "pausedDL") }}{{ $status = "paused" }}{{ else if or (eq $state "stoppedUP") (eq $state "stoppedDL") }}{{ $status = "stopped" }}{{ else if or (eq $state "queuedUP") (eq $state "queuedDL") }}{{ $status = "queued" }}{{ else if or (eq $state "error") (eq $state "missingFiles") }}{{ $status = "error" }}{{ else if or (eq $state "checkingUP") (eq $state "checkingDL") (eq $state "checkingResumeData") (eq $state "allocating") }}{{ $status = "checking" }}{{ end }}
+              
               <li style="border-bottom:0.5px solid #3B404E; padding:10px 0;">
                 <div style="display:grid; grid-template-columns:40px 1.2fr 1fr 100px 80px 80px 80px; gap:8px; align-items:center; width:100%;">
                   <span>↑</span>
@@ -108,16 +198,17 @@
                   </span>
                   <span>{{ printf "%.2f" ($t.Float "ratio") }}</span>
                   <span style="width:80px;">
-                    {{ $ulSpeed := $t.Float "upspeed" }}
-                    {{ if lt $ulSpeed 1000.0 }}-- KB/s
-                    {{ else if lt $ulSpeed 1000000.0 }}{{ printf "%.0f KB/s" (div $ulSpeed 1000.0) }}
-                    {{ else }}{{ printf "%.1f MB/s" (div $ulSpeed 1000000.0) }}{{ end }}
+                    {{ if $ulSpeed }}
+                      {{ if lt $ulSpeed 1000.0 }}-- KB/s
+                      {{ else if lt $ulSpeed 1000000.0 }}{{ printf "%.0f KB/s" (div $ulSpeed 1000.0) }}
+                      {{ else }}{{ printf "%.1f MB/s" (div $ulSpeed 1000000.0) }}{{ end }}
+                    {{ else }}-- KB/s{{ end }}
                   </span>
                 </div>
               </li>
             {{ end }}
-          </ul>
-        {{ end }}
+          {{ end }}
+        </ul>
 
       </div>
     {{ else }}
