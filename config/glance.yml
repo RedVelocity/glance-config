@@ -66,6 +66,9 @@ pages:
               - title: Jellyseerr
                 url: https://js.${BASE_HOST}/
                 icon: sh:jellyseerr
+              - title: qBittorrent # only for Linux ISOs, of course
+                url: https://qb.${BASE_HOST}/
+                icon: sh:qbittorrent
               - title: Radarr
                 url: https://rad.${BASE_HOST}/
                 icon: sh:radarr
@@ -75,21 +78,18 @@ pages:
               - title: Prowlarr
                 url: https://prowl.${BASE_HOST}/
                 icon: sh:prowlarr
-              - title: qBittorrent # only for Linux ISOs, of course
-                url: https://qb.${BASE_HOST}/
-                icon: sh:qbittorrent
-              - title: AdGuard Home
-                url: https://ag.${BASE_HOST}/
-                icon: sh:adguard-home
+              # - title: AdGuard Home
+              #   url: https://ag.${BASE_HOST}/
+              #   icon: sh:adguard-home
               - title: Komodo
                 url: https://komo.${BASE_HOST}/
                 icon: sh:komodo-light
               - title: Portainer
                 url: https://portainer.${BASE_HOST}/
                 icon: sh:portainer
-              # - title: Backrest
-              #   url: https://backrest.${BASE_HOST}/
-              #   icon: sh:backrest-light
+              - title: Backrest
+                url: https://backrest.${BASE_HOST}/
+                icon: sh:backrest-light
           - $include: qb.yml
 
       - size: small
