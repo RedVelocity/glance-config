@@ -54,7 +54,6 @@ pages:
                 hide-top-domains: true
                 username: ${AG_USER}
                 password: ${AG_PASSWORD}
-
           - type: monitor
             cache: 1m
             hide-header: true
@@ -90,12 +89,16 @@ pages:
               - title: Backrest
                 url: https://backrest.${BASE_HOST}/
                 icon: sh:backrest-light
+              # hide-header: true
           - $include: qb.yml
 
       - size: small
         widgets:
           - $include: media-server.yml
-          - $include: seerr.yml
+          - $include: radarr-releases.yml
+            hide-header: true
+          - $include: sonarr-releases.yml
+            hide-header: true
 
   # Add more pages here:
   # - name: Your page name
