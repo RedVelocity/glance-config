@@ -6,7 +6,7 @@
     service: sonarr # sonarr, radarr, or lidarr
     type: upcoming # upcoming, recent, or missing
     size: small # small, medium, large, or huge
-    collapse-after: 3
+    collapse-after: 2
     show-grabbed: false
     interval: 30 # optional, days
     sort-time: asc # optional, asc or desc (default)
@@ -411,7 +411,7 @@
                   <div class="text-truncate" title="{{ $subtitle }}">{{ $subtitle }}</div>
                   <div class="text-truncate">
                     {{ if eq $service "sonarr" }}
-                      <div>{{ $seString }} - {{ $datetype }} {{ $date.Format "Mon, 2-Jan 03:04" }}</div>
+                      <span>{{ $seString }} | {{ $datetype }} {{ $date.Format "Mon, 2-Jan 03:04" }}</span>
                     {{ else }}
                       <span>{{ $datetype }} {{ $date.Format "Mon, 2-Jan" }}</span>
                     {{ end }}
@@ -434,10 +434,6 @@
                       </a>
                       </div>
                     {{ end }}
-                  {{ else }}
-                    <div class="{{ if eq $size "small" }}text-truncate{{ if eq $service "radarr" }} margin-top-5{{ end }}{{ else }}text-truncate-2-lines margin-top-5{{ end }}">
-                      {{ $summary }}
-                    </div>
                   {{ end }}
               </div>
             </li>

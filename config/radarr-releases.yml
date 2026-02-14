@@ -9,7 +9,7 @@
     collapse-after: 3
     show-grabbed: false
     interval: 30 # optional, days
-    #sort-time: asc          # optional, asc or desc (default)
+    sort-time: asc # optional, asc or desc (default)
     #cover-proxy: "https://proxy.example.com/radarrcover" # optional
     api-base-url: https://rad.${BASE_HOST}
     key: ${RADARR_KEY}
