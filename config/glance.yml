@@ -62,9 +62,9 @@ pages:
               - title: Jellyfin
                 url: https://jelly.${BASE_HOST}/
                 icon: sh:jellyfin
-              - title: Jellyseerr
-                url: https://js.${BASE_HOST}/
-                icon: sh:jellyseerr
+              - title: Seerr
+                url: https://seerr.${BASE_HOST}/
+                icon: sh:seerr
               - title: qBittorrent # only for Linux ISOs, of course
                 url: https://qb.${BASE_HOST}/
                 icon: sh:qbittorrent
@@ -85,7 +85,7 @@ pages:
                 icon: sh:komodo-light
               - title: Portainer
                 url: https://portainer.${BASE_HOST}/
-                icon: sh:portainer
+                icon: sh:portainer-pink
               - title: Backrest
                 url: https://backrest.${BASE_HOST}/
                 icon: sh:backrest-light
