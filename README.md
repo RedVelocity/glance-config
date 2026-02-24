@@ -4,13 +4,13 @@ Custom configuration repository for **[Glance](https://github.com/glanceapp/glan
 
 This repository contains:
 
-- 📁 Glance YAML configuration files
-- 🎨 Custom assets (CSS)
-- 🔌 **Custom widgets** for qBittorrent and Seerr
+- Glance YAML configuration files
+- Custom assets (CSS)
+- **Custom widgets** for qBittorrent and Seerr
 
 ---
 
-## 📂 Repository Structure
+## Repository Structure
 
 ```
 glance-config/
@@ -24,7 +24,7 @@ glance-config/
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1️⃣ Clone the Repository
 
@@ -51,17 +51,17 @@ http://localhost:8080
 
 ---
 
-## 🧠 Configuration Overview
+## Configuration Overview
 
 Glance uses:
 
-- A main config file (`glance.yml`)
-- Modular page YAML files
-- A custom CSS file to change the background and add transparency to widgets
+- A main config file - `glance.yml`
+- Modular page YAML files - `qb.yml` `seerr.yml` etc.
+- A custom CSS file to change the background and add transparency to widgets - `assets/global.yml`
   
 ---
 
-# ⚙️ Environment Variables
+# Environment Variables
 
 This configuration **relies heavily on environment variables** to keep the setup flexible and portable.
 
@@ -106,12 +106,12 @@ may require variables such as:
 - Usernames/passwords
 - Tokens
 
-⚠️ **Important:**  
-Always check the individual YAML files (`qb.yml`, `seerr.yml`, etc.) to see which environment variables are required.
+> [!IMPORTANT]  
+> ⚠️ Always check the individual YAML files (`qb.yml`, `seerr.yml`, etc.) to see which environment variables are required.
 
 ---
 
-# 🎨 Custom CSS
+# Custom CSS
 
 Global styling is defined in:
 
