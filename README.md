@@ -4,15 +4,15 @@ Custom configuration repository for **[Glance](https://github.com/glanceapp/glan
 
 ![Dashboard Preview](https://i.redd.it/nj1uxa1vghhg1.png)
 
+---
+
+## Repository Structure
+
 This repository contains:
 
 - Glance YAML configuration files
 - Custom assets (CSS)
 - **Custom widgets** for qBittorrent and Seerr
-
----
-
-## Repository Structure
 
 ```
 glance-config/
@@ -21,7 +21,7 @@ glance-config/
 │
 ├── config/
 │   ├── glance.yml            # Main configuration entrypoint
-│   └── ...                   # Additional page configs
+│   └── ...                   # Additional widgets
 ```
 
 ---
