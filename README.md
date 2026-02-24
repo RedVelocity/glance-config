@@ -2,6 +2,8 @@
 
 Custom configuration repository for **[Glance](https://github.com/glanceapp/glance)** — a lightweight, self-hosted dashboard for aggregating feeds, widgets, and links into a clean homepage.
 
+![Dashboard Preview](https://i.redd.it/nj1uxa1vghhg1.png)
+
 This repository contains:
 
 - Glance YAML configuration files
@@ -55,9 +57,9 @@ http://localhost:8080
 
 Glance uses:
 
-- A main config file - `glance.yml`
-- Modular page YAML files - `qb.yml` `seerr.yml` etc.
-- A custom CSS file to change the background and add transparency to widgets - `assets/global.yml`
+- A main config file (`glance.yml`)
+- Modular page YAML files (`qb.yml`, `seerr.yml`, etc.)
+- A custom CSS file to change the background and add transparency to widgets (`assets/global.yml`)
   
 ---
 
