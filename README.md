@@ -1,4 +1,4 @@
-# Glance Config
+# [RedVelocity](https://redvelo.city) Glance Config
 
 Custom configuration repository for **[Glance](https://github.com/glanceapp/glance)** — a lightweight, self-hosted dashboard for aggregating feeds, widgets, and links into a clean homepage.
 
