@@ -95,10 +95,8 @@ pages:
       - size: small
         widgets:
           - $include: media-server.yml
-          - $include: radarr-releases.yml
-            hide-header: true
-          - $include: sonarr-releases.yml
-            hide-header: true
+          - $include: gluetun.yml
+          - $include: media-releases.yml
 
   # Add more pages here:
   # - name: Your page name

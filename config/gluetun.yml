@@ -1,0 +1,40 @@
+- type: custom-api
+  title: VPN status
+  cache: 30s
+  url: http://qb.${BASE_HOST}:8000/v1/publicip/ip
+  headers:
+    X-API-Key: ${GLUETUN_API_KEY}
+  template: |
+    {{ if eq .Response.StatusCode 200 }}
+      {{ $ip := (.JSON.String "public_ip") }}
+      {{ $city := (.JSON.String "city") }}
+      {{ $country := (.JSON.String "country") }}
+      {{ if eq $ip "" }}
+        <div>
+          <div>
+            <div>
+              <div class="color-highlight size-h3">
+                VPN Not Connected
+                <span class="color-negative">●</span> 
+              </div>
+            </dv>
+          </div>
+        </div>
+      {{ else }}
+        <div>
+          <div>
+            <div>
+              <div class="color-highlight size-h3">
+                VPN Connected
+                <span class="color-positive">●</span> 
+              </div>
+            </div>
+            <div class="size-h4">{{ $ip }} - {{ $city }}, {{ $country }}</div>
+          </div>
+        </div>
+      {{ end }}
+    {{ else }}
+      <div style="text-align: center; color: var(--color-negative);">
+        Error: {{ .Response.StatusCode }} - {{ .Response.Status }}
+      </div>
+    {{ end }}

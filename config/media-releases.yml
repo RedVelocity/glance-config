@@ -1,0 +1,95 @@
+- type: custom-api
+  title: Media Releases
+  cache: 10m
+  frameless: true
+  options:
+    interval: 30
+    aspect-ratio: portrait
+    radarr-url: https://rad.${BASE_HOST}
+    radarr-key: ${RADARR_KEY}
+    sonarr-url: https://son.${BASE_HOST}
+    sonarr-key: ${SONARR_KEY}
+  template: |
+    {{ $aspectRatio := .Options.StringOr "aspect-ratio" "portrait" }}
+    {{ $intervalH := .Options.IntOr "interval" 30 | mul 24 }}
+    {{ $radarrUrl := .Options.StringOr "radarr-url" "" }}
+    {{ $sonarrUrl := .Options.StringOr "sonarr-url" "" }}
+    {{ $radarrKey := .Options.StringOr "radarr-key" "" }}
+    {{ $sonarrKey := .Options.StringOr "sonarr-key" "" }}
+
+    {{ $now := now | formatTime "2006-01-02T15:04:05" }}
+    {{ $endDate := offsetNow (printf "+%dh" $intervalH) | formatTime "2006-01-02T15:04:05" }}
+
+    {{ $radarrReq := printf "%s/api/v3/calendar?start=%s&end=%s" $radarrUrl $now $endDate }}
+    {{ $sonarrReq := printf "%s/api/v3/calendar?includeSeries=true&start=%s&end=%s" $sonarrUrl $now $endDate }}
+
+    {{ $radarrData := newRequest $radarrReq
+      | withHeader "Accept" "application/json"
+      | withHeader "X-Api-Key" $radarrKey
+      | getResponse }}
+
+    {{ $sonarrData := newRequest $sonarrReq
+      | withHeader "Accept" "application/json"
+      | withHeader "X-Api-Key" $sonarrKey
+      | getResponse }}
+
+    {{ if and (eq $radarrData.Response.StatusCode 200) (eq $sonarrData.Response.StatusCode 200) }}
+    <div class="carousel-container show-right-cutoff">
+      <div class="cards-horizontal carousel-items-container">
+        {{/* Display movies first */}}
+        {{ range $radarrData.JSON.Array "" | sortByTime "releaseDate" "rfc3339" "asc" }}
+          {{ $title := .String "title" }}
+          {{ $coverUrl := printf "%s/api/v3/mediacover/%s/poster-500.jpg?apikey=%s" $radarrUrl (.String "id") $radarrKey }}
+          {{ $link := printf "%s/movie/%s" $radarrUrl (.String "titleSlug") }}
+          {{ $date := .String "releaseDate" | parseTime "RFC3339" }}
+          {{ $dateStr := $date.Format "Mon, 2-Jan" }}
+          
+            <div class="card widget-content-frame">
+              <img src="{{ $coverUrl }}"
+                alt="{{ $title }}"
+                loading="lazy"
+                style="
+                  object-fit: cover;
+                  border-radius: var(--border-radius) var(--border-radius) 0 0;
+                  aspect-ratio: 2/3;
+                "
+              />
+                <ul class="flex flex-column justify-evenly margin-bottom-3" style="height: 100%;">
+                  <li class="text-truncate color-primary"><a href="{{ $link }}" target="_blank" style="text-decoration: none;">{{ $title }}</a></li>
+                  <li class="text-truncate size-sm">{{ $dateStr }}</li>
+                </ul>
+            </div>
+        {{ end }}
+        
+        {{/* Display series episodes */}}
+        {{ range $sonarrData.JSON.Array "" | sortByTime "airDateUtc" "rfc3339" "asc" }}
+          {{ $title := .String "series.title" }}
+          {{ $coverUrl := printf "%s/api/v3/mediacover/%s/poster-500.jpg?apikey=%s" $sonarrUrl (.String "seriesId") $sonarrKey }}
+          {{ $link := printf "%s/series/%s" $sonarrUrl (.String "series.titleSlug") }}
+          {{ $date := .String "airDateUtc" | parseTime "RFC3339" }}
+          {{ $seString := printf "S%02dE%02d" (.Int "seasonNumber") (.Int "episodeNumber") }}
+          {{ $episodeTitle := .String "title" }}
+          {{ $dateStr := $date.Format "Mon, 2-Jan 15:04" }}
+          
+            <div class="card widget-content-frame">
+              <img src="{{ $coverUrl }}"
+                alt="{{ $title }}"
+                loading="lazy"
+                style="
+                  object-fit: cover;
+                  border-radius: var(--border-radius) var(--border-radius) 0 0;
+                  aspect-ratio: 2/3;
+                "
+              />
+                <ul class="flex flex-column justify-evenly margin-bottom-3" style="height: 100%;">
+                  <li class="text-truncate color-primary"><a href="{{ $link }}" target="_blank" style="text-decoration: none;">{{ $title }}</a></li>
+                  <li class="text-truncate size-sm">{{ $seString }} | {{ $episodeTitle }}</li>
+                  <li class="text-truncate size-sm">{{ $dateStr }}</li>
+                </ul>
+            </div>
+        {{ end }}
+      </div>
+      </div>
+    {{ else }}
+      <p class="color-negative">Failed to fetch data</p>
+    {{ end }}
