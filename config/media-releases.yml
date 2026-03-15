@@ -54,7 +54,7 @@
                   aspect-ratio: 2/3;
                 "
               />
-                <ul class="flex flex-column justify-evenly margin-bottom-3" style="height: 100%;">
+                <ul class="flex flex-column justify-evenly margin-bottom-10 margin-top-10 padding-inline-widget" style="height: 100%;">
                   <li class="text-truncate color-primary"><a href="{{ $link }}" target="_blank" style="text-decoration: none;">{{ $title }}</a></li>
                   <li class="text-truncate size-sm">{{ $dateStr }}</li>
                 </ul>
@@ -81,7 +81,7 @@
                   aspect-ratio: 2/3;
                 "
               />
-                <ul class="flex flex-column justify-evenly margin-bottom-3" style="height: 100%;">
+                <ul class="flex flex-column justify-evenly margin-bottom-10 margin-top-10 padding-inline-widget" style="height: 100%;">
                   <li class="text-truncate color-primary"><a href="{{ $link }}" target="_blank" style="text-decoration: none;">{{ $title }}</a></li>
                   <li class="text-truncate size-sm">{{ $seString }} | {{ $episodeTitle }}</li>
                   <li class="text-truncate size-sm">{{ $dateStr }}</li>
