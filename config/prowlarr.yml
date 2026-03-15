@@ -6,13 +6,25 @@
     base-url: ${PROWLARR_URL}
     api-key: ${PROWLARR_KEY}
     collapse-after: ${PROWLARR_COLLAPSE_AFTER}
+  subrequests:
+    indexers:
+      url: ${PROWLARR_URL}/api/v1/indexer
+      headers:
+        Accept: application/json
+        X-Api-Key: ${PROWLARR_KEY}
+    indexerstatus:
+      url: ${PROWLARR_URL}/api/v1/indexerstatus
+      headers:
+        Accept: application/json
+        X-Api-Key: ${PROWLARR_KEY}
   template: |
-    {{ $apiBaseUrl := .Options.StringOr "base-url" "" }}
-    {{ $key := .Options.StringOr "api-key" "" }}
     {{ $url := .Options.StringOr "url" "" }}
     {{ $collapseAfter := .Options.IntOr "collapse-after" 5 }}
 
-    {{ if or (eq $apiBaseUrl "") (eq $key "") (eq $url "") }}
+    {{ $indexData := .Subrequest "indexers" }}
+    {{ $statusData := .Subrequest "indexerstatus" }}
+
+    {{ if or (eq $url "") }}
       <div class="widget-error-header">
           <div class="color-negative size-h3">ERROR</div>
           <svg class="widget-error-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5">
@@ -32,14 +44,7 @@
         </p>
     {{ else }}
 
-      {{ $indexUrl := printf "%s/api/v1/indexer" $apiBaseUrl }}
-
-      {{ $indexData := newRequest $indexUrl
-        | withHeader "Accept" "application/json"
-        | withHeader "X-Api-Key" $key
-        | getResponse }}
-
-      {{ if eq $indexData.Response.StatusCode 200 }}
+      {{ if and (eq $indexData.Response.StatusCode 200) (eq $statusData.Response.StatusCode 200) }}
         <style>
           .prowlarr-indexers .prowlarr-index-item
           {
@@ -55,27 +60,53 @@
           }
         </style>
 
+        {{ $indexers := $indexData.JSON.Array "" }}
+        {{ $statuses := $statusData.JSON.Array "" }}
+
         <ul class="prowlarr-indexers list list-gap-10 collapsible-container" data-collapse-after="{{ $collapseAfter }}">
 
-          {{ range $indexData.JSON.Array "" }}
+          {{ range $indexers }}
+            {{ $indexerId := .Int "id" }}
             {{ $isEnabled := .String "enable" }}
+            {{ $indexerName := .String "name" }}
+            
+            {{/* Find matching status for this indexer */}}
+            {{ $isDisabled := false }}
+            {{ range $statuses }}
+              {{ if eq (.Int "indexerId") $indexerId }}
+                {{ $disabledTill := .String "disabledTill" }}
+                {{ if ne $disabledTill "" }}
+                  {{ $isDisabled = true }}
+                {{ end }}
+              {{ end }}
+            {{ end }}
       
             <li class="flex items-center gap-12 prowlarr-index-item">
-              <a href="{{ $url }}" target="_blank" class="size-title-dynamic color-highlight text-truncate block grow">{{ .String "name" }}</a>
+              <a href="{{ $url }}" target="_blank" class="size-title-dynamic color-highlight text-truncate block grow">{{ $indexerName }}</a>
               <span>{{ .String "privacy" }}</span>
               {{ if eq $isEnabled "true" }}
-                <div class="margin-left-auto shrink-0" data-popover-type="text" data-popover-position="above" data-popover-text="Enabled" aria-label="Enabled">
-                  <div class="monitor-site-status-icon-compact" title="Enabled">
-                    <svg fill="var(--color-positive)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"></path>
-                    </svg>
+                {{ if $isDisabled }}
+                  <div class="margin-left-auto shrink-0" data-popover-type="text" data-popover-position="above" data-popover-text="Temporarily Unavailable" aria-label="Temporarily Unavailable">
+                    <div class="monitor-site-status-icon-compact" title="Temporarily Unavailable">
+                      <svg fill="var(--color-warning)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"></path>
+                      </svg>
+                    </div>
                   </div>
-                </div>
+                {{ else }}
+                  <div class="margin-left-auto shrink-0" data-popover-type="text" data-popover-position="above" data-popover-text="Available" aria-label="Available">
+                    <div class="monitor-site-status-icon-compact" title="Available">
+                      <svg fill="var(--color-positive)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"></path>
+                      </svg>
+                    </div>
+                  </div>
+                {{ end }}
               {{ else }}
                 <div class="margin-left-auto shrink-0" data-popover-type="text" data-popover-position="above" data-popover-text="Disabled" aria-label="Disabled">
                   <div class="monitor-site-status-icon-compact" title="Disabled">
                     <svg fill="var(--color-negative)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"></path>
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM8.28 7.22a.75.75 0 0 0-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 1 0 1.06 1.06L10 11.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L11.06 10l1.72-1.72a.75.75 0 0 0-1.06-1.06L10 8.94 8.28 7.22Z" clip-rule="evenodd"></path>
                     </svg>
                   </div>
                 </div>
@@ -86,7 +117,7 @@
 
         </ul>
       {{ else }}
-        <p>Failed to fetch data (Status: {{ $indexData.Response.StatusCode }})</p>
+        <p>Failed to fetch data (Indexers: {{ $indexData.Response.StatusCode }}, Status: {{ $statusData.Response.StatusCode }})</p>
       {{ end }}
 
     {{ end }}

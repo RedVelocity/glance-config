@@ -26,13 +26,19 @@
       {{ $seedingTorrents := $seeding.JSON.Array "" }}
       
       <div class="list" style="--list-gap:15px;">
-        <div style="display:grid; grid-template-columns:40px 1.2fr 1fr 100px 80px 80px 80px; gap:8px; padding:8px 0; border-bottom:1px solid #3B404E; font-weight:700; align-items:center;">
+        <style>
+          @media (max-width: 768px) {
+            .mobile-hide { display: none !important; }
+            .header-grid { grid-template-columns: 40px 1.2fr 60px 60px 60px !important; }
+            .torrent-grid { grid-template-columns: 40px 1.2fr 60px 60px 60px !important; }
+          }
+        </style>
+        <div class="header-grid" style="display:grid; grid-template-columns:40px 1.2fr 1fr 100px 80px 80px; gap:8px; padding:8px 0; border-bottom:1px solid #3B404E; font-weight:700; align-items:center;">
           <span></span>
           <span>Name</span>
           <span>Progress</span>
           <span>Status</span>
-          <span>Size</span>
-          <span>Ratio</span>
+          <span class="mobile-hide">Size</span>
           <span>Speed</span>
         </div>
 
@@ -47,17 +53,17 @@
                   {{ if eq $state "metaDL" }}{{ $status = "metadata" }}{{ else if or (eq $state "stalledUP") (eq $state "stalledDL") }}{{ $status = "stalled" }}{{ else if or (eq $state "pausedUP") (eq $state "pausedDL") }}{{ $status = "paused" }}{{ else if or (eq $state "stoppedUP") (eq $state "stoppedDL") }}{{ $status = "stopped" }}{{ else if or (eq $state "queuedUP") (eq $state "queuedDL") }}{{ $status = "queued" }}{{ else if or (eq $state "error") (eq $state "missingFiles") }}{{ $status = "error" }}{{ else if or (eq $state "checkingUP") (eq $state "checkingDL") (eq $state "checkingResumeData") (eq $state "allocating") }}{{ $status = "checking" }}{{ end }}
                   
                   <li style="border-bottom:0.5px solid #3B404E; padding:10px 0;">
-                    <div style="display:grid; grid-template-columns:40px 1.2fr 1fr 100px 80px 80px 80px; gap:8px; align-items:center; width:100%;">
+                    <div class="torrent-grid" style="display:grid; grid-template-columns:40px 1.2fr 1fr 100px 80px 80px; gap:8px; align-items:center; width:100%;">
                       <span>↓</span>
                       <span title="{{ $t.String "name" }}" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $t.String "name" }}</span>
                       <div style="display:flex; align-items:center; gap:8px;">
-                        <div style="background: rgba(128,128,128,0.12); height:8px; border-radius:4px; width:100%;">
+                        <div class="mobile-hide" style="background: rgba(128,128,128,0.12); height:8px; border-radius:4px; width:100%;">
                           <div style="width: {{ $t.Float "progress" | mul 100 }}%; background-color: {{ if lt ($t.Float "progress") 1.0 }}var(--color-info){{ else }}var(--color-positive){{ end }}; height:100%; border-radius:4px;"></div>
                         </div>
                         <span style="min-width:48px;">{{ $t.Float "progress" | mul 100 | printf "%.1f" }}%</span>
                       </div>
                       <span style="text-transform: capitalize;">{{ $status }}</span>
-                      <span>
+                      <span class="mobile-hide">
                         {{ $size := $t.Float "size" }}
                         {{ if lt $size 1073741824.0 }}
                           {{ printf "%.1f MB" (div $size 1048576.0) }}
@@ -65,7 +71,6 @@
                           {{ printf "%.1f GB" (div $size 1073741824.0) }}
                         {{ end }}
                       </span>
-                      <span>{{ printf "%.2f" ($t.Float "ratio") }}</span>
                       <span style="width:80px;">
                         {{ if lt $dlSpeed 1000.0 }}-- KB/s
                         {{ else if lt $dlSpeed 1000000.0 }}{{ printf "%.0f KB/s" (div $dlSpeed 1000.0) }}
@@ -87,17 +92,17 @@
                   {{ if eq $state "metaDL" }}{{ $status = "metadata" }}{{ else if or (eq $state "stalledUP") (eq $state "stalledDL") }}{{ $status = "stalled" }}{{ else if or (eq $state "pausedUP") (eq $state "pausedDL") }}{{ $status = "paused" }}{{ else if or (eq $state "stoppedUP") (eq $state "stoppedDL") }}{{ $status = "stopped" }}{{ else if or (eq $state "queuedUP") (eq $state "queuedDL") }}{{ $status = "queued" }}{{ else if or (eq $state "error") (eq $state "missingFiles") }}{{ $status = "error" }}{{ else if or (eq $state "checkingUP") (eq $state "checkingDL") (eq $state "checkingResumeData") (eq $state "allocating") }}{{ $status = "checking" }}{{ end }}
                   
                   <li style="border-bottom:0.5px solid #3B404E; padding:10px 0;">
-                    <div style="display:grid; grid-template-columns:40px 1.2fr 1fr 100px 80px 80px 80px; gap:8px; align-items:center; width:100%;">
+                    <div class="torrent-grid" style="display:grid; grid-template-columns:40px 1.2fr 1fr 100px 80px 80px; gap:8px; align-items:center; width:100%;">
                       <span>↑</span>
                       <span title="{{ $t.String "name" }}" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $t.String "name" }}</span>
                       <div style="display:flex; align-items:center; gap:8px;">
-                        <div style="background: rgba(128,128,128,0.12); height:8px; border-radius:4px; width:100%;">
+                        <div class="mobile-hide" style="background: rgba(128,128,128,0.12); height:8px; border-radius:4px; width:100%;">
                           <div style="width: {{ $t.Float "progress" | mul 100 }}%; background-color: {{ if lt ($t.Float "progress") 1.0 }}var(--color-info){{ else }}var(--color-positive){{ end }}; height:100%; border-radius:4px;"></div>
                         </div>
                         <span style="min-width:48px;">{{ $t.Float "progress" | mul 100 | printf "%.1f" }}%</span>
                       </div>
                       <span style="text-transform: capitalize;">{{ $status }}</span>
-                      <span>
+                      <span class="mobile-hide">
                         {{ $size := $t.Float "size" }}
                         {{ if lt $size 1073741824.0 }}
                           {{ printf "%.1f MB" (div $size 1048576.0) }}
@@ -105,7 +110,6 @@
                           {{ printf "%.1f GB" (div $size 1073741824.0) }}
                         {{ end }}
                       </span>
-                      <span>{{ printf "%.2f" ($t.Float "ratio") }}</span>
                       <span style="width:80px;">
                         {{ if lt $ulSpeed 1000.0 }}-- KB/s
                         {{ else if lt $ulSpeed 1000000.0 }}{{ printf "%.0f KB/s" (div $ulSpeed 1000.0) }}
@@ -132,17 +136,17 @@
               {{ if eq $state "metaDL" }}{{ $status = "metadata" }}{{ else if or (eq $state "stalledUP") (eq $state "stalledDL") }}{{ $status = "stalled" }}{{ else if or (eq $state "pausedUP") (eq $state "pausedDL") }}{{ $status = "paused" }}{{ else if or (eq $state "stoppedUP") (eq $state "stoppedDL") }}{{ $status = "stopped" }}{{ else if or (eq $state "queuedUP") (eq $state "queuedDL") }}{{ $status = "queued" }}{{ else if or (eq $state "error") (eq $state "missingFiles") }}{{ $status = "error" }}{{ else if or (eq $state "checkingUP") (eq $state "checkingDL") (eq $state "checkingResumeData") (eq $state "allocating") }}{{ $status = "checking" }}{{ end }}
               
               <li style="border-bottom:0.5px solid #3B404E; padding:10px 0;">
-                <div style="display:grid; grid-template-columns:40px 1.2fr 1fr 100px 80px 80px 80px; gap:8px; align-items:center; width:100%;">
+                <div class="torrent-grid" style="display:grid; grid-template-columns:40px 1.2fr 1fr 100px 80px 80px; gap:8px; align-items:center; width:100%;">
                   <span>↓</span>
                   <span title="{{ $t.String "name" }}" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $t.String "name" }}</span>
                   <div style="display:flex; align-items:center; gap:8px;">
-                    <div style="background: rgba(128,128,128,0.12); height:8px; border-radius:4px; width:100%;">
+                    <div class="mobile-hide" style="background: rgba(128,128,128,0.12); height:8px; border-radius:4px; width:100%;">
                       <div style="width: {{ $t.Float "progress" | mul 100 }}%; background-color: {{ if lt ($t.Float "progress") 1.0 }}var(--color-info){{ else }}var(--color-positive){{ end }}; height:100%; border-radius:4px;"></div>
                     </div>
                     <span style="min-width:48px;">{{ $t.Float "progress" | mul 100 | printf "%.1f" }}%</span>
                   </div>
                   <span style="text-transform: capitalize;">{{ $status }}</span>
-                  <span>
+                  <span class="mobile-hide">
                     {{ $size := $t.Float "size" }}
                     {{ if lt $size 1073741824.0 }}
                       {{ printf "%.1f MB" (div $size 1048576.0) }}
@@ -150,7 +154,6 @@
                       {{ printf "%.1f GB" (div $size 1073741824.0) }}
                     {{ end }}
                   </span>
-                  <span>{{ printf "%.2f" ($t.Float "ratio") }}</span>
                   <span style="width:80px;">
                     {{ if $dlSpeed }}
                       {{ if lt $dlSpeed 1000.0 }}-- KB/s
@@ -178,17 +181,17 @@
               {{ if eq $state "metaDL" }}{{ $status = "metadata" }}{{ else if or (eq $state "stalledUP") (eq $state "stalledDL") }}{{ $status = "stalled" }}{{ else if or (eq $state "pausedUP") (eq $state "pausedDL") }}{{ $status = "paused" }}{{ else if or (eq $state "stoppedUP") (eq $state "stoppedDL") }}{{ $status = "stopped" }}{{ else if or (eq $state "queuedUP") (eq $state "queuedDL") }}{{ $status = "queued" }}{{ else if or (eq $state "error") (eq $state "missingFiles") }}{{ $status = "error" }}{{ else if or (eq $state "checkingUP") (eq $state "checkingDL") (eq $state "checkingResumeData") (eq $state "allocating") }}{{ $status = "checking" }}{{ end }}
               
               <li style="border-bottom:0.5px solid #3B404E; padding:10px 0;">
-                <div style="display:grid; grid-template-columns:40px 1.2fr 1fr 100px 80px 80px 80px; gap:8px; align-items:center; width:100%;">
+                <div class="torrent-grid" style="display:grid; grid-template-columns:40px 1.2fr 1fr 100px 80px 80px; gap:8px; align-items:center; width:100%;">
                   <span>↑</span>
                   <span title="{{ $t.String "name" }}" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $t.String "name" }}</span>
                   <div style="display:flex; align-items:center; gap:8px;">
-                    <div style="background: rgba(128,128,128,0.12); height:8px; border-radius:4px; width:100%;">
+                    <div class="mobile-hide" style="background: rgba(128,128,128,0.12); height:8px; border-radius:4px; width:100%;">
                       <div style="width: {{ $t.Float "progress" | mul 100 }}%; background-color: {{ if lt ($t.Float "progress") 1.0 }}var(--color-info){{ else }}var(--color-positive){{ end }}; height:100%; border-radius:4px;"></div>
                     </div>
                     <span style="min-width:48px;">{{ $t.Float "progress" | mul 100 | printf "%.1f" }}%</span>
                   </div>
                   <span style="text-transform: capitalize;">{{ $status }}</span>
-                  <span>
+                  <span class="mobile-hide">
                     {{ $size := $t.Float "size" }}
                     {{ if lt $size 1073741824.0 }}
                       {{ printf "%.1f MB" (div $size 1048576.0) }}
@@ -196,7 +199,6 @@
                       {{ printf "%.1f GB" (div $size 1073741824.0) }}
                     {{ end }}
                   </span>
-                  <span>{{ printf "%.2f" ($t.Float "ratio") }}</span>
                   <span style="width:80px;">
                     {{ if $ulSpeed }}
                       {{ if lt $ulSpeed 1000.0 }}-- KB/s
