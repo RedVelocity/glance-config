@@ -41,8 +41,41 @@
           {{ $title := .String "title" }}
           {{ $coverUrl := printf "%s/api/v3/mediacover/%s/poster-500.jpg?apikey=%s" $radarrUrl (.String "id") $radarrKey }}
           {{ $link := printf "%s/movie/%s" $radarrUrl (.String "titleSlug") }}
-          {{ $date := .String "releaseDate" | parseTime "RFC3339" }}
-          {{ $dateStr := $date.Format "Mon, 2-Jan" }}
+          
+          {{ $releaseType := "Release" }}
+          {{ $selectedDate := .String "releaseDate" }}
+          
+          {{ $inCinemas := .String "inCinemas" }}
+          {{ $digitalRelease := .String "digitalRelease" }}
+          {{ $physicalRelease := .String "physicalRelease" }}
+          
+          {{/* Find the next upcoming release */}}
+          {{ if ne $physicalRelease "" }}
+            {{ if gt $physicalRelease $now }}
+              {{ $releaseType = "Physical" }}
+              {{ $selectedDate = $physicalRelease }}
+            {{ end }}
+          {{ end }}
+          
+          {{ if ne $digitalRelease "" }}
+            {{ if gt $digitalRelease $now }}
+              {{ if or (eq $selectedDate .String "releaseDate") (lt $digitalRelease $selectedDate) }}
+                {{ $releaseType = "Digital" }}
+                {{ $selectedDate = $digitalRelease }}
+              {{ end }}
+            {{ end }}
+          {{ end }}
+          
+          {{ if ne $inCinemas "" }}
+            {{ if gt $inCinemas $now }}
+              {{ if or (eq $selectedDate .String "releaseDate") (lt $inCinemas $selectedDate) }}
+                {{ $releaseType = "In Cinemas" }}
+                {{ $selectedDate = $inCinemas }}
+              {{ end }}
+            {{ end }}
+          {{ end }}
+          
+          {{ $dateStr := $selectedDate | parseTime "RFC3339" | formatTime "Mon, 2-Jan" }}
           
             <div class="card widget-content-frame">
               <img src="{{ $coverUrl }}"
@@ -56,6 +89,7 @@
               />
                 <ul class="flex flex-column justify-evenly margin-bottom-10 margin-top-10 padding-inline-widget" style="height: 100%;">
                   <li class="text-truncate color-primary"><a href="{{ $link }}" target="_blank" style="text-decoration: none;">{{ $title }}</a></li>
+                  <li class="text-truncate size-sm">{{ $releaseType }}</li>
                   <li class="text-truncate size-sm">{{ $dateStr }}</li>
                 </ul>
             </div>
