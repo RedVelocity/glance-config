@@ -54,6 +54,7 @@ pages:
                 hide-top-domains: true
                 username: ${AG_USER}
                 password: ${AG_PASSWORD}
+
           - type: monitor
             cache: 1m
             hide-header: true
