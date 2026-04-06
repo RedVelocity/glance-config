@@ -5,7 +5,7 @@
   --color-warning: hsl(43, 50%, 70%);
   --color-primary: #ff9e42;
   /* Widget background color with alpha */
-  --bga: 70%;
+  --bga: 75%;
   --color-widget-background: hsl(
     var(--color-widget-background-hsl-values),
     var(--bga)
@@ -17,10 +17,10 @@
 }
 body {
   font-family: 'Outfit', sans-serif;
-  background-image: url(https://i.redd.it/n6g3shl26fmg1.png);
+  background-image: url(https://i.redd.it/qzno3639rhqg1.png);
   background-repeat: no-repeat;
   background-size: cover;
-  background-blend-mode: color-dodge;
+  /* background-blend-mode: color-dodge; */
 }
 /* Blur effect for widget backgrounds */
 .widget-content:not(.widget-content-frameless),
