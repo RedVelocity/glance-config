@@ -18,7 +18,6 @@
     {{ $userName := .Options.StringOr "user-name" "" }}
 
     {{ define "errorMsg" }}
-    <div class="widget-error widget-content">
       <div class="widget-error-header">
         <div class="color-negative size-h3">ERROR</div>
         <svg class="widget-error-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5">
@@ -26,7 +25,6 @@
         </svg>
       </div>
       <p class="break-all">{{ . }}</p>
-    </div>
     {{ end }}
 
     {{ if or (eq $mediaServer "") (eq $baseURL "") (eq $apiKey "") (and (eq $mediaServer "jellyfin") (eq $userName "")) }}

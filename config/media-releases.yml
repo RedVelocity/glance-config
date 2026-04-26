@@ -1,17 +1,15 @@
 - type: custom-api
   title: Media Releases
-  cache: 10m
+  cache: 1m
   frameless: true
   options:
-    interval: 30
-    aspect-ratio: portrait
+    interval: ${RELEASE_INTERVAL_DAYS}
     radarr-url: https://rad.${BASE_HOST}
     radarr-key: ${RADARR_KEY}
     sonarr-url: https://son.${BASE_HOST}
     sonarr-key: ${SONARR_KEY}
     exclude-physical: true
   template: |
-    {{ $aspectRatio := .Options.StringOr "aspect-ratio" "portrait" }}
     {{ $intervalH := .Options.IntOr "interval" 30 | mul 24 }}
     {{ $radarrUrl := .Options.StringOr "radarr-url" "" }}
     {{ $sonarrUrl := .Options.StringOr "sonarr-url" "" }}

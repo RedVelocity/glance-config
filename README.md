@@ -1,3 +1,7 @@
+> [!IMPORTANT]
+
+> ⚠️ Setup has been migrated to [Dynacat](https://github.com/Panonim/dynacat) due to lack of updates on Glance project
+
 # [RedVelocity](https://redvelo.city) Glance Config
 
 Custom configuration repository for **[Glance](https://github.com/glanceapp/glance)** — a lightweight, self-hosted dashboard for aggregating feeds, widgets, and links into a clean homepage.
@@ -11,17 +15,27 @@ Custom configuration repository for **[Glance](https://github.com/glanceapp/glan
 This repository contains:
 
 - Glance YAML configuration files
+
 - Custom assets (CSS)
+
 - **Custom widgets** for qBittorrent and Seerr
 
 ```
+
 glance-config/
+
 ├── assets/
-│   ├── global.css              # Custom CSS styling
+
+│ ├── global.css # Custom CSS styling
+
 │
+
 ├── config/
-│   ├── glance.yml            # Main configuration entrypoint
-│   └── ...                   # Additional widgets
+
+│ ├── glance.yml # Main configuration entrypoint
+
+│ └── ... # Additional widgets
+
 ```
 
 ---
@@ -31,8 +45,11 @@ glance-config/
 ### 1️⃣ Clone the Repository
 
 ```bash
-git clone https://github.com/RedVelocity/glance-config.git
-cd glance-config
+
+git  clone  https://github.com/RedVelocity/glance-config.git
+
+cd  glance-config
+
 ```
 
 ---
@@ -48,7 +65,9 @@ You can grab the docker compose setup from [here](https://github.com/RedVelocity
 Open your browser and go to:
 
 ```
+
 http://localhost:8080
+
 ```
 
 ---
@@ -57,10 +76,12 @@ http://localhost:8080
 
 Glance uses:
 
-- A main config file (`glance.yml`)
+- A main config file (`dynacat.yml`)
+
 - Modular page YAML files (`qb.yml`, `seerr.yml`, etc.)
+
 - A custom CSS file to change the background and add transparency to widgets (`assets/global.yml`)
-  
+
 ---
 
 # Environment Variables
@@ -72,17 +93,25 @@ This configuration **relies heavily on environment variables** to keep the setup
 At minimum, you must define:
 
 ```
+
 BASE_HOST
+
 ```
 
 This is used throughout the config to dynamically generate service URLs:
 
 ```
+
 https://jelly.${BASE_HOST}/
+
 https://qb.${BASE_HOST}/
+
 https://seerr.${BASE_HOST}/
+
 https://rad.${BASE_HOST}/
+
 ...
+
 ```
 
 ## Additional Environment Variables
@@ -93,22 +122,28 @@ Examples from the main config:
 
 ```yaml
 username: ${AG_USER}
+
 password: ${AG_PASSWORD}
 ```
 
 And the custom widgets:
 
 - `qb.yml`
+
 - `seerr.yml`
 
 may require variables such as:
 
 - API keys
+
 - Service URLs
+
 - Usernames/passwords
+
 - Tokens
 
-> [!IMPORTANT]  
+> [!IMPORTANT]
+
 > ⚠️ Always check the individual YAML files (`qb.yml`, `seerr.yml`, etc.) to see which environment variables are required.
 
 ---
@@ -118,12 +153,15 @@ may require variables such as:
 Global styling is defined in:
 
 ```
+
 assets/global.css
+
 ```
 
-It is referenced in `glance.yml`:
+It is referenced in `dynacat.yml`:
 
 ```yaml
 theme:
-  custom-css-file: /assets/global.css
+
+custom-css-file: /assets/global.css
 ```

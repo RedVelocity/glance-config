@@ -1,11 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@font-face {
+  font-family: 'Outfit';
+  src:
+    url('/assets/fonts/Outfit-VariableFont_wght.ttf')
+      format('truetype-variations'),
+    url('/assets/fonts/Outfit-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900; /* Define the supported range */
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
   --color-info: hsl(43, 50%, 70%);
   --color-warning: hsl(43, 50%, 70%);
-  --color-primary: #ff9e42;
+  --color-primary: #a78bfa;
+  --color-popover-border: #a78bfa;
+  --color-background: #1c2534;
   /* Widget background color with alpha */
-  --bga: 75%;
+  --color-widget-background-hsl-values: 220, 60%, 7%;
+  --bga: 55%;
   --color-widget-background: hsl(
     var(--color-widget-background-hsl-values),
     var(--bga)
@@ -17,15 +29,15 @@
 }
 body {
   font-family: 'Outfit', sans-serif;
-  background-image: url(https://i.redd.it/qzno3639rhqg1.png);
+  background-image: url(/assets/images/bg.jpg);
   background-repeat: no-repeat;
   background-size: cover;
-  /* background-blend-mode: color-dodge; */
+  background-blend-mode: soft-light;
 }
 /* Blur effect for widget backgrounds */
 .widget-content:not(.widget-content-frameless),
 .widget-content-frame {
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(5px);
   box-shadow:
     rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
     rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
