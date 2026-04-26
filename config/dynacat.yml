@@ -2,7 +2,14 @@ server:
   assets-path: /app/assets
 
 branding:
+  # custom-footer: |
+  #   <p>Powered by <a href="https://github.com/Panonim/dynacat">Dynacat</a></p>
+  logo-url: /assets/images/app-icon.png
+  favicon-url: /assets/images/app-icon.png
+  app-name: 'RedVelocity Dashboard'
+  app-icon-url: '/assets/images/app-icon.png'
   hide-footer: true
+  # app-background-color: '#151519'
 
 theme:
   background-color: 203 27 9

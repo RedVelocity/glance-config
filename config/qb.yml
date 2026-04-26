@@ -1,5 +1,6 @@
 - type: custom-api
-  cache: 10s
+  # cache: 10s
+  update-interval: 30s
   title: qBittorrent
   hide-header: true
   options:
