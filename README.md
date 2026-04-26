@@ -1,6 +1,6 @@
-> [!IMPORTANT]
-
+> [!IMPORTANT]  
 > ⚠️ Setup has been migrated to [Dynacat](https://github.com/Panonim/dynacat) due to lack of updates on Glance project
+
 
 # [RedVelocity](https://redvelo.city) Glance Config
 
@@ -142,8 +142,7 @@ may require variables such as:
 
 - Tokens
 
-> [!IMPORTANT]
-
+> [!IMPORTANT]  
 > ⚠️ Always check the individual YAML files (`qb.yml`, `seerr.yml`, etc.) to see which environment variables are required.
 
 ---
