@@ -1,6 +1,6 @@
 > [!IMPORTANT]  
-> ⚠️ Setup has been migrated to [Dynacat](https://github.com/Panonim/dynacat) due to lack of updates on Glance project
-
+> ⚠️ Setup has been migrated to [Dynacat](https://github.com/Panonim/dynacat) due to lack of updates on Glance project.
+> You can find the legacy glance config [here](https://github.com/RedVelocity/glance-config/tree/glance)
 
 # [RedVelocity](https://redvelo.city) Glance Config
 
@@ -14,28 +14,20 @@ Custom configuration repository for **[Glance](https://github.com/glanceapp/glan
 
 This repository contains:
 
-- Glance YAML configuration files
+- Dynacat YAML configuration files
 
 - Custom assets (CSS)
 
 - **Custom widgets** for qBittorrent and Seerr
 
 ```
-
 glance-config/
-
 ├── assets/
-
 │ ├── global.css # Custom CSS styling
-
 │
-
 ├── config/
-
-│ ├── glance.yml # Main configuration entrypoint
-
+│ ├── dynacat.yml # Main configuration entrypoint
 │ └── ... # Additional widgets
-
 ```
 
 ---
@@ -45,11 +37,8 @@ glance-config/
 ### 1️⃣ Clone the Repository
 
 ```bash
-
 git  clone  https://github.com/RedVelocity/glance-config.git
-
 cd  glance-config
-
 ```
 
 ---
@@ -65,16 +54,14 @@ You can grab the docker compose setup from [here](https://github.com/RedVelocity
 Open your browser and go to:
 
 ```
-
 http://localhost:8080
-
 ```
 
 ---
 
 ## Configuration Overview
 
-Glance uses:
+Dynacat uses:
 
 - A main config file (`dynacat.yml`)
 
@@ -93,25 +80,17 @@ This configuration **relies heavily on environment variables** to keep the setup
 At minimum, you must define:
 
 ```
-
 BASE_HOST
-
 ```
 
 This is used throughout the config to dynamically generate service URLs:
 
 ```
-
 https://jelly.${BASE_HOST}/
-
 https://qb.${BASE_HOST}/
-
 https://seerr.${BASE_HOST}/
-
 https://rad.${BASE_HOST}/
-
 ...
-
 ```
 
 ## Additional Environment Variables
@@ -122,14 +101,12 @@ Examples from the main config:
 
 ```yaml
 username: ${AG_USER}
-
 password: ${AG_PASSWORD}
 ```
 
 And the custom widgets:
 
 - `qb.yml`
-
 - `seerr.yml`
 
 may require variables such as:
@@ -152,15 +129,12 @@ may require variables such as:
 Global styling is defined in:
 
 ```
-
 assets/global.css
-
 ```
 
 It is referenced in `dynacat.yml`:
 
 ```yaml
 theme:
-
 custom-css-file: /assets/global.css
 ```
