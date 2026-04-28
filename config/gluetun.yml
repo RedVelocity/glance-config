@@ -1,6 +1,6 @@
 - type: custom-api
   title: VPN status
-  cache: 1m
+  update-interval: 1m
   url: http://qb.${BASE_HOST}:8000/v1/publicip/ip
   headers:
     X-API-Key: ${GLUETUN_API_KEY}

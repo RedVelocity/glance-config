@@ -1,6 +1,6 @@
 - type: custom-api
   title: Prowlarr Indexers
-  cache: 1m
+  update-interval: 1m
   options:
     url: '${PROWLARR_URL}'
     base-url: ${PROWLARR_URL}

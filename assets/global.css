@@ -10,7 +10,7 @@
 }
 
 :root {
-  --color-info: hsl(43, 50%, 70%);
+  --color-info: #a78bfa;
   --color-warning: hsl(43, 50%, 70%);
   --color-primary: #a78bfa;
   --color-popover-border: #a78bfa;
@@ -30,8 +30,10 @@
 body {
   font-family: 'Outfit', sans-serif;
   background-image: url(/assets/images/bg.jpg);
-  background-repeat: no-repeat;
+  /* background-repeat: no-repeat; */
   background-size: cover;
+  background-attachment: fixed;
+  height: 100vh;
   background-blend-mode: soft-light;
 }
 /* Blur effect for widget backgrounds */

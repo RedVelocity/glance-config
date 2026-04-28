@@ -1,7 +1,7 @@
 - type: custom-api
   title: Media Server History
   frameless: true
-  cache: 5m
+  update-interval: 5m
   options:
     media-server: 'jellyfin'
     base-url: ${JELLYFIN_URL}

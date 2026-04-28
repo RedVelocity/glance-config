@@ -37,7 +37,7 @@ pages:
                 label: Bengaluru
 
           - type: html
-            cache: 10m
+            update-interval: 15m
             source: |
               <iframe
                 src="https://api.wo-cloud.com/content/widget/?geoObjectKey=15339767&language=en&region=GB&timeFormat=HH:mm&windUnit=kmh&systemOfMeasurement=metric&temperatureUnit=celsius"
@@ -55,7 +55,7 @@ pages:
               - $include: prowlarr.yml
                 css-class: widget-type-prowlarr-custom
               - type: dns-stats
-                cache: 5m
+                update-interval: 5m
                 service: adguard
                 url: https://ag.${BASE_HOST}/
                 hide-top-domains: true
@@ -63,7 +63,7 @@ pages:
                 password: ${AG_PASSWORD}
 
           - type: monitor
-            cache: 1m
+            update-interval: 1m
             hide-header: true
             title: Services
             sites:

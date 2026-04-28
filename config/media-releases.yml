@@ -1,6 +1,6 @@
 - type: custom-api
   title: Media Releases
-  cache: 1m
+  update-interval: 5m
   frameless: true
   options:
     interval: ${RELEASE_INTERVAL_DAYS}
