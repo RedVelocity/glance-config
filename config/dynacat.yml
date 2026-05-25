@@ -51,6 +51,7 @@ pages:
       - size: full
         widgets:
           - type: split-column
+            frameless: true
             widgets:
               - $include: prowlarr.yml
                 css-class: widget-type-prowlarr-custom

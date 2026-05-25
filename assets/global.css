@@ -30,11 +30,17 @@
 body {
   font-family: 'Outfit', sans-serif;
   background-image: url(/assets/images/bg.jpg);
+  overflow-y: auto;
   /* background-repeat: no-repeat; */
   background-size: cover;
   background-attachment: fixed;
-  height: 100vh;
   background-blend-mode: soft-light;
+}
+.color-info {
+  color: var(--color-info);
+}
+.color-warning {
+  color: var(--color-warning);
 }
 /* Blur effect for widget backgrounds */
 .widget-content:not(.widget-content-frameless),
@@ -70,6 +76,10 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+}
+
+.widget-type-split-column .widget-content {
+  /* background: none; */
 }
 /* .widget-type-prowlarr-custom .widget-content {
   height: calc(100% - var(--widget-gap));

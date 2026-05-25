@@ -24,7 +24,7 @@
           </div>
       {{ end }}
     {{ else }}
-      <div style="text-align: center; color: var(--color-negative);">
+      <div class="text-center color-negative">
         Error: {{ .Response.StatusCode }} - {{ .Response.Status }}
       </div>
     {{ end }}

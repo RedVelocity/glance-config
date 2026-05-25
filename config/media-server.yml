@@ -8,7 +8,7 @@
     api-key: ${JELLYFIN_TOKEN}
     user-name: ${JELLYFIN_USER}
     media-types: 'Movie,Episode'
-    history-length: '10'
+    history-length: '20'
     thumbnail-aspect-ratio: 'portrait'
     time-format: 'Jan 02 15:04'
   template: |
@@ -87,6 +87,7 @@
             {{ $showEpisode := "" }}
             {{ $artist := "" }}
             {{ $albumTitle := "" }}
+            {{ $rating := "" }}
             
             {{ if $isShows }}
               {{ $showTitle = $item.String "SeriesName" }}
@@ -95,6 +96,8 @@
             {{ else if $isMusic }}
               {{ $artist = $item.String "AlbumArtist" }}
               {{ $albumTitle = $item.String "Album" }}
+            {{ else if $isMovie }}
+              {{ $rating = $item.String "OfficialRating" }}
             {{ end }}
 
             {{ $thumbID := $item.String "Id" }}
@@ -137,8 +140,9 @@
                   <li class="text-truncate color-primary"><a href="{{ $itemLink }}" target="_blank" style="text-decoration: none;">{{ $artist }}</a></li>
                   <li class="text-truncate size-sm">{{ $albumTitle }}</li>
                   <li class="text-truncate size-sm">{{ $title }}</li>
-                {{ else }}
+                {{ else if $isMovie }}
                   <li class="text-truncate color-primary"><a href="{{ $itemLink }}" target="_blank" style="text-decoration: none;">{{ $title }}</a></li>
+                  <li class="text-truncate size-sm">{{ $rating }}</li>
                 {{ end }}
                 <li class="text-truncate size-sm"><span {{ $playedAt }}></span> ago</li>
               </ul>
