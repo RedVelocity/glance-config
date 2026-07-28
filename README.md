@@ -4,7 +4,7 @@
 
 # [RedVelocity](https://redvelo.city) Glance Config
 
-Custom configuration repository for **[Glance](https://github.com/glanceapp/glance)** — a lightweight, self-hosted dashboard for aggregating feeds, widgets, and links into a clean homepage.
+Custom configuration repository for **[Dynacat](https://github.com/Panonim/dynacat)** — a lightweight, self-hosted dashboard for aggregating feeds, widgets, and links into a clean homepage.
 
 ![Dashboard Preview](https://i.redd.it/nj1uxa1vghhg1.png)
 
