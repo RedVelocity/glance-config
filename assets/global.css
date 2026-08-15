@@ -19,7 +19,7 @@
      relative color syntax (hsl(from <color> h s l / a)) — pulls the
      hue/saturation/lightness out of the hex value at compute time,
      so there's only one color to maintain. --bga controls opacity. */
-  --bga: 35%;
+  --bga: 45%;
   --color-widget-background: hsl(
     from var(--color-background) h s l / var(--bga)
   );
@@ -47,7 +47,7 @@
 
 body {
   font-family: 'Outfit', sans-serif;
-  background-image: url(/assets/images/bg2.jpg);
+  background-image: url('https://i.redd.it/1o07cxcm3mfh1.png');
   /* background-image: url('https://i.redd.it/ul37zchdgfeh1.jpeg'); */
   overflow-y: auto;
   /* background-repeat: no-repeat; */

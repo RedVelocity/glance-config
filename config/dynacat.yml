@@ -5,7 +5,6 @@ document:
   head: |
     <svg class="glass-surface__filter" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
       <defs>
-        <!-- ---------- Desktop / large widgets ---------- -->
         <filter id="glass-filter-desktop" color-interpolation-filters="sRGB" x="0%" y="0%" width="100%" height="100%">
           <feImage
             x="0" y="0" width="100%" height="100%"
@@ -56,6 +55,7 @@ pages:
             first-day-of-week: sunday
 
           - type: clock
+            hide-header: true
             hour-format: 24h
             timezones:
               - timezone: Asia/Kolkata
@@ -71,7 +71,7 @@ pages:
                 frameborder="0"
                 width="100%"
                 height="318"
-                style="border-radius:8px; margin-top:2rem;" ></iframe>
+                style="border-radius:8px; margin-top:var(--widget-gap);" ></iframe>
 
       - size: full
         widgets:
