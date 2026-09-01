@@ -64,7 +64,7 @@
       | withParameter "isPlayed" "true"
       | withParameter "sortBy" "DatePlayed"
       | withParameter "sortOrder" "Descending"
-      | withParameter "Fields" "UserDataLastPlayedDate"
+      | withParameter "Fields" "UserDataLastPlayedDate,Overview"
       | withHeader "Accept" "application/json"
       | getResponse }}
 
@@ -87,7 +87,7 @@
             {{ $showEpisode := "" }}
             {{ $artist := "" }}
             {{ $albumTitle := "" }}
-            {{ $rating := "" }}
+            {{ $overview := "" }}
             
             {{ if $isShows }}
               {{ $showTitle = $item.String "SeriesName" }}
@@ -97,7 +97,7 @@
               {{ $artist = $item.String "AlbumArtist" }}
               {{ $albumTitle = $item.String "Album" }}
             {{ else if $isMovie }}
-              {{ $rating = $item.String "OfficialRating" }}
+              {{ $overview = $item.String "Overview" }}
             {{ end }}
 
             {{ $thumbID := $item.String "Id" }}
@@ -142,7 +142,7 @@
                   <li class="text-truncate size-sm">{{ $title }}</li>
                 {{ else if $isMovie }}
                   <li class="text-truncate color-primary"><a href="{{ $itemLink }}" target="_blank" style="text-decoration: none;">{{ $title }}</a></li>
-                  <li class="text-truncate size-sm">{{ $rating }}</li>
+                  <li class="text-truncate size-sm" title="{{ $overview }}">{{ $overview }}</li>
                 {{ end }}
                 <li class="text-truncate size-sm"><span {{ $playedAt }}></span> ago</li>
               </ul>

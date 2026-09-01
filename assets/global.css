@@ -47,7 +47,7 @@
 
 body {
   font-family: 'Outfit', sans-serif;
-  background-image: url('https://i.redd.it/1o07cxcm3mfh1.png');
+  background-image: url('/assets/images/bg.jpg');
   /* background-image: url('https://i.redd.it/ul37zchdgfeh1.jpeg'); */
   overflow-y: auto;
   /* background-repeat: no-repeat; */
