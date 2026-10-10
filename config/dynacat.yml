@@ -1,6 +1,5 @@
 server:
   assets-path: /app/assets
-
 document:
   head: |
     <svg class="glass-surface__filter" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
@@ -24,9 +23,9 @@ document:
         </filter>
       </defs>
     </svg>
-
 branding:
   # custom-footer: |
+
   #   <p>Powered by <a href="https://github.com/Panonim/dynacat">Dynacat</a></p>
   logo-url: /assets/images/app-icon.png
   favicon-url: /assets/images/app-icon.png
@@ -34,7 +33,6 @@ branding:
   app-icon-url: '/assets/images/app-icon.png'
   hide-footer: true
   # app-background-color: '#151519'
-
 theme:
   background-color: 203 27 9
   contrast-multiplier: 1.2
@@ -43,24 +41,28 @@ theme:
   negative-color: 360 100 71
   disable-picker: true
   custom-css-file: /assets/global.css
-
 pages:
   - name: Home
     # Optionally, if you only have a single page you can hide the desktop navigation for a cleaner look
+
     # hide-desktop-navigation: true
     columns:
       - size: small
         widgets:
-          - type: calendar
-            first-day-of-week: sunday
-
+          - type: releases
+            repositories:
+              - jellyfin/jellyfin
+              - fredrikburmester/streamystats
+              - Panonim/dynacat
+              - moghtech/komodo
+              - garethgeorge/backrest
+            show-source-icon: true
           - type: clock
             hide-header: true
             hour-format: 24h
             timezones:
               - timezone: Asia/Kolkata
                 label: Bengaluru
-
           - type: html
             update-interval: 15m
             source: |
@@ -72,7 +74,6 @@ pages:
                 width="100%"
                 height="318"
                 style="border-radius:8px; margin-top:var(--widget-gap);" ></iframe>
-
       - size: full
         widgets:
           - type: split-column
@@ -81,13 +82,14 @@ pages:
               - $include: prowlarr.yml
                 css-class: widget-type-prowlarr-custom
               - type: dns-stats
-                update-interval: 5m
+                frameless: false
+                hide-graph: false
+                hour-format: 24h
+                password: ${AG_PASSWORD}
                 service: adguard
                 url: https://ag.${BASE_HOST}/
-                hide-top-domains: true
                 username: ${AG_USER}
-                password: ${AG_PASSWORD}
-
+                hide-top-domains: true
           - type: monitor
             update-interval: 1m
             hide-header: true
@@ -99,7 +101,10 @@ pages:
               - title: Seerr
                 url: https://seerr.${BASE_HOST}/
                 icon: sh:seerr
-              - title: qBittorrent # only for Linux ISOs, of course
+              - title: Streamystats
+                url: https://sst.esh.redvelo.city
+                icon: sh:streamystats
+              - title: qBittorrent
                 url: https://qb.${BASE_HOST}/
                 icon: sh:qbittorrent
               - title: Radarr
@@ -108,12 +113,6 @@ pages:
               - title: Sonarr
                 url: https://son.${BASE_HOST}/
                 icon: sh:sonarr
-              - title: Prowlarr
-                url: https://prowl.${BASE_HOST}/
-                icon: sh:prowlarr
-              # - title: AdGuard Home
-              #   url: https://ag.${BASE_HOST}/
-              #   icon: sh:adguard-home
               - title: Komodo
                 url: https://komo.${BASE_HOST}/
                 icon: sh:komodo-light
@@ -123,7 +122,6 @@ pages:
               - title: Backrest
                 url: https://backrest.${BASE_HOST}/
                 icon: sh:backrest-light
-              # hide-header: true
           - $include: qb.yml
 
       - size: small
@@ -132,17 +130,26 @@ pages:
           - $include: gluetun.yml
           - $include: media-releases.yml
 
-  # Add more pages here:
-  # - name: Your page name
-  #   columns:
-  #     - size: small
-  #       widgets:
-  #         # Add widgets here
+# Add more pages here:
 
-  #     - size: full
-  #       widgets:
-  #         # Add widgets here
+# - name: Your page name
 
-  #     - size: small
-  #       widgets:
-  #         # Add widgets here
+#   columns:
+
+#     - size: small
+
+#       widgets:
+
+#         # Add widgets here
+
+#     - size: full
+
+#       widgets:
+
+#         # Add widgets here
+
+#     - size: small
+
+#       widgets:
+
+#         # Add widgets here

@@ -18,13 +18,23 @@
     {{ $userName := .Options.StringOr "user-name" "" }}
 
     {{ define "errorMsg" }}
-      <div class="widget-error-header">
-        <div class="color-negative size-h3">ERROR</div>
-        <svg class="widget-error-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"></path>
-        </svg>
+      <div class="widget-error widget-content">
+        <div class="widget-error-header">
+          <div class="color-negative size-h3">ERROR</div>
+          <svg class="widget-error-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378 2.697 16.126ZM12 15.75h.007v.008H12v-.008Z">
+            </path>
+          </svg>
+        </div>
+        <p class="break-all">{{ . }}</p>
       </div>
-      <p class="break-all">{{ . }}</p>
     {{ end }}
 
     {{ if or (eq $mediaServer "") (eq $baseURL "") (eq $apiKey "") (and (eq $mediaServer "jellyfin") (eq $userName "")) }}
@@ -39,7 +49,7 @@
     {{ $userID := "" }}
     {{ $usersRequestURL := concat $baseURL "/Users" }}
     {{ $usersCall := newRequest $usersRequestURL
-      | withParameter "api_key" $apiKey
+      | withParameter "apiKey" $apiKey
       | withHeader "Accept" "application/json"
       | getResponse }}
 
@@ -51,17 +61,16 @@
       {{ end }}
     {{ end }}
 
-    {{ if eq $userID "" }}
-      {{ template "errorMsg" (concat "User '" $userName "' not found.") }}
+    {{ if ne $usersCall.Response.StatusCode 200 }}
+      {{ template "errorMsg" (concat "Failed to fetch user data for " $userName ".") }}
     {{ else }}
 
     {{ $historyRequestURL := concat $baseURL "/Users/" $userID "/Items" }}
     {{ $historyCall := newRequest $historyRequestURL
-      | withParameter "api_key" $apiKey
+      | withParameter "apiKey" $apiKey
       | withParameter "Limit" $historyLength
       | withParameter "IncludeItemTypes" $mediaTypes
       | withParameter "Recursive" "true"
-      | withParameter "isPlayed" "true"
       | withParameter "sortBy" "DatePlayed"
       | withParameter "sortOrder" "Descending"
       | withParameter "Fields" "UserDataLastPlayedDate,Overview"
@@ -71,7 +80,7 @@
     {{ $history := $historyCall.JSON.Array "Items" }}
 
     {{ if and (eq $historyCall.Response.StatusCode 200) (eq (len $history) 0) }}
-      <p>Nothing has been played. Start streaming something!</p>
+      {{ template "errorMsg" "Nothing has been played. Start streaming something!" }}
     {{ else }}
       <div class="carousel-container show-right-cutoff">
         <div class="cards-horizontal carousel-items-container">
@@ -104,7 +113,7 @@
             {{ if $isShows }}
               {{ $thumbID = $item.String "SeriesId" }}
             {{ end }}
-            {{ $thumbURL := concat $baseURL "/Items/" $thumbID "/Images/Primary?api_key=" $apiKey }}
+            {{ $thumbURL := concat $baseURL "/Items/" $thumbID "/Images/Primary?apiKey=" $apiKey }}
 
             {{ $time := $item.String "UserData.LastPlayedDate" }}
             {{ $playedAt := $time | parseRelativeTime "rfc3339" }}

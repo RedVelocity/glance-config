@@ -134,6 +134,11 @@ body {
   justify-content: space-around;
 }
 
+.color-primary-if-not-visited:link,
+.color-primary-if-not-visited:visited {
+  color: var(--color-primary) !important;
+}
+
 /* .widget-type-split-column .widget-content {
   background: none;
 } */
