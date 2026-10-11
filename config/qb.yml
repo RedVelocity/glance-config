@@ -39,6 +39,7 @@
       {{ else }}      
       <div class="list" style="--list-gap:15px;">
         <style>
+          .collapsible-container > li:last-child { border-bottom: none !important; }
           @media (max-width: 768px) {
             .mobile-hide { display: none !important; }
             .header-grid { grid-template-columns: 40px 1.2fr 60px 60px 60px !important; }
