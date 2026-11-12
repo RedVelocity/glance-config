@@ -1,10 +1,11 @@
 - type: custom-api
   title: Media Server History
   frameless: true
-  update-interval: 5m
+  cache: 5m
   options:
     media-server: 'jellyfin'
-    base-url: ${JELLYFIN_URL}
+    base-url: ${JELLYFIN_URL} # browser-facing: thumbnails + links
+    api-url: http://jellyfin:8096 # server-side only: swap for your container name / LAN IP
     api-key: ${JELLYFIN_TOKEN}
     user-name: ${JELLYFIN_USER}
     media-types: 'Movie,Episode'
@@ -14,6 +15,7 @@
   template: |
     {{ $mediaServer := .Options.StringOr "media-server" "" }}
     {{ $baseURL := .Options.StringOr "base-url" "" }}
+    {{ $apiURL := .Options.StringOr "api-url" $baseURL }}
     {{ $apiKey := .Options.StringOr "api-key" "" }}
     {{ $userName := .Options.StringOr "user-name" "" }}
 
@@ -47,7 +49,7 @@
     {{ $timeFormat := .Options.StringOr "time-format" "Jan 02 15:04" }}
 
     {{ $userID := "" }}
-    {{ $usersRequestURL := concat $baseURL "/Users" }}
+    {{ $usersRequestURL := concat $apiURL "/Users" }}
     {{ $usersCall := newRequest $usersRequestURL
       | withParameter "apiKey" $apiKey
       | withHeader "Accept" "application/json"
@@ -63,23 +65,30 @@
 
     {{ if ne $usersCall.Response.StatusCode 200 }}
       {{ template "errorMsg" (concat "Failed to fetch user data for " $userName ".") }}
+    {{ else if eq $userID "" }}
+      {{ template "errorMsg" (concat "User " $userName " not found.") }}
     {{ else }}
 
-    {{ $historyRequestURL := concat $baseURL "/Users/" $userID "/Items" }}
+    {{ $historyRequestURL := concat $apiURL "/Users/" $userID "/Items" }}
     {{ $historyCall := newRequest $historyRequestURL
       | withParameter "apiKey" $apiKey
       | withParameter "Limit" $historyLength
       | withParameter "IncludeItemTypes" $mediaTypes
       | withParameter "Recursive" "true"
+      | withParameter "Filters" "IsPlayed"
       | withParameter "sortBy" "DatePlayed"
       | withParameter "sortOrder" "Descending"
       | withParameter "Fields" "UserDataLastPlayedDate,Overview"
+      | withParameter "EnableTotalRecordCount" "false"
+      | withParameter "EnableImages" "false"
       | withHeader "Accept" "application/json"
       | getResponse }}
 
     {{ $history := $historyCall.JSON.Array "Items" }}
 
-    {{ if and (eq $historyCall.Response.StatusCode 200) (eq (len $history) 0) }}
+    {{ if ne $historyCall.Response.StatusCode 200 }}
+      {{ template "errorMsg" (printf "Failed to fetch play history for %s (HTTP %d)." $userName $historyCall.Response.StatusCode) }}
+    {{ else if eq (len $history) 0 }}
       {{ template "errorMsg" "Nothing has been played. Start streaming something!" }}
     {{ else }}
       <div class="carousel-container show-right-cutoff">
@@ -97,7 +106,7 @@
             {{ $artist := "" }}
             {{ $albumTitle := "" }}
             {{ $overview := "" }}
-            
+
             {{ if $isShows }}
               {{ $showTitle = $item.String "SeriesName" }}
               {{ $showSeason = $item.String "ParentIndexNumber" }}

@@ -54,8 +54,8 @@ pages:
               - jellyfin/jellyfin
               - fredrikburmester/streamystats
               - Panonim/dynacat
-              - moghtech/komodo
-              - garethgeorge/backrest
+              - Finsys/dockhand
+              - Shoshuo/Prismarr
             show-source-icon: true
           - type: clock
             hide-header: true
@@ -98,10 +98,10 @@ pages:
               - title: Jellyfin
                 url: https://jelly.${BASE_HOST}/
                 icon: sh:jellyfin
-              - title: Seerr
-                url: https://seerr.${BASE_HOST}/
-                icon: sh:seerr
-              - title: Streamystats
+              - title: Prismarr
+                url: https://prismarr.${BASE_HOST}/
+                icon: sh:mediamanager
+              - title: StreamyStats
                 url: https://sst.esh.redvelo.city
                 icon: sh:streamystats
               - title: qBittorrent
@@ -113,17 +113,16 @@ pages:
               - title: Sonarr
                 url: https://son.${BASE_HOST}/
                 icon: sh:sonarr
-              - title: Komodo
-                url: https://komo.${BASE_HOST}/
-                icon: sh:komodo-light
-              - title: Portainer
-                url: https://portainer.${BASE_HOST}/
-                icon: sh:portainer-pink
+              - title: Prowlarr
+                url: https://prowl.${BASE_HOST}/
+                icon: sh:prowlarr
+              - title: Dockhand
+                url: https://dockhand.${BASE_HOST}/
+                icon: sh:dockhand
               - title: Backrest
                 url: https://backrest.${BASE_HOST}/
                 icon: sh:backrest-light
           - $include: qb.yml
-
       - size: small
         widgets:
           - $include: media-server.yml

@@ -1,30 +1,7 @@
 - type: custom-api
   title: VPN status
-  update-interval: 1m
-  url: http://qb.${BASE_HOST}:8000/v1/publicip/ip
+  update-interval: 5m
+  url: https://gt.${BASE_HOST}/v1/publicip/ip
   headers:
     X-API-Key: ${GLUETUN_API_KEY}
-  template: |
-    {{ if eq .Response.StatusCode 200 }}
-      {{ $ip := (.JSON.String "public_ip") }}
-      {{ $city := (.JSON.String "city") }}
-      {{ $country := (.JSON.String "country") }}
-      {{ if eq $ip "" }}
-              <div class="color-highlight size-h3">
-                VPN Not Connected
-                <span class="color-negative">●</span> 
-              </div>
-      {{ else }}
-          <div>
-              <div class="color-highlight size-h3">
-                VPN Connected
-                <span class="color-positive">●</span> 
-              </div>
-            <div class="size-h4">{{ $ip }} - {{ $city }}, {{ $country }}</div>
-          </div>
-      {{ end }}
-    {{ else }}
-      <div class="text-center color-negative">
-        Error: {{ .Response.StatusCode }} - {{ .Response.Status }}
-      </div>
-    {{ end }}
+  template: "{{ if eq .Response.StatusCode 200 }}\n  {{ $ip := (.JSON.String \"public_ip\") }}\n  {{ $city := (.JSON.String \"city\") }}\n  {{ $country := (.JSON.String \"country\") }}\n  {{ if eq $ip \"\" }}\n          <div class=\"color-highlight size-h3\">\n            VPN Not Connected\n            <span class=\"color-negative\">●</span> \n          </div>\n  {{ else }}\n      <div>\n          <div class=\"color-highlight size-h3\">\n            VPN Connected\n            <span class=\"color-positive\">●</span> \n          </div>\n        <div class=\"size-h4\">{{ $ip }} - {{ $city }}, {{ $country }}</div>\n      </div>\n  {{ end }}\n{{ else }}\n  <div class=\"text-center color-negative\">\n    Error: {{ .Response.StatusCode }} - {{ .Response.Status }}\n  </div>\n{{ end }}"
