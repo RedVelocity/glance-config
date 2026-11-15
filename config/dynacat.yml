@@ -87,9 +87,11 @@ pages:
                 hour-format: 24h
                 password: ${AG_PASSWORD}
                 service: adguard
-                url: https://ag.${BASE_HOST}/
+                url: ${AG_URL}
                 username: ${AG_USER}
                 hide-top-domains: true
+                cache: 20m
+                update-interval: 30m
           - type: monitor
             update-interval: 1m
             hide-header: true
@@ -98,24 +100,24 @@ pages:
               - title: Jellyfin
                 url: https://jelly.${BASE_HOST}/
                 icon: sh:jellyfin
-              - title: Prismarr
-                url: https://prismarr.${BASE_HOST}/
-                icon: sh:mediamanager
+              - title: Seerr
+                url: https://seerr.${BASE_HOST}/
+                icon: sh:seerr
               - title: StreamyStats
                 url: https://sst.esh.redvelo.city
                 icon: sh:streamystats
-              - title: qBittorrent
-                url: https://qb.${BASE_HOST}/
-                icon: sh:qbittorrent
+              - title: Prismarr
+                url: https://prismarr.${BASE_HOST}/
+                icon: sh:mediamanager
               - title: Radarr
                 url: https://rad.${BASE_HOST}/
                 icon: sh:radarr
               - title: Sonarr
                 url: https://son.${BASE_HOST}/
                 icon: sh:sonarr
-              - title: Prowlarr
-                url: https://prowl.${BASE_HOST}/
-                icon: sh:prowlarr
+              - title: qBittorrent
+                url: https://qb.${BASE_HOST}/
+                icon: sh:qbittorrent
               - title: Dockhand
                 url: https://dockhand.${BASE_HOST}/
                 icon: sh:dockhand
