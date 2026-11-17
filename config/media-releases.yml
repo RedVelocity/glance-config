@@ -5,12 +5,16 @@
   options:
     interval: ${RELEASE_INTERVAL_DAYS}
     radarr-url: ${RADARR_URL}
+    radarr-base-url: ${RADARR_BASE_URL}
     radarr-key: ${RADARR_KEY}
     sonarr-url: ${SONARR_URL}
+    sonarr-base-url: ${SONARR_BASE_URL}
     sonarr-key: ${SONARR_KEY}
   template: |
     {{ $intervalH := .Options.IntOr "interval" 30 | mul 24 }}
 
+    {{ $radarrBaseUrl := .Options.StringOr "radarr-base-url" "" }}
+    {{ $sonarrBaseUrl := .Options.StringOr "sonarr-base-url" "" }}
     {{ $radarrUrl := .Options.StringOr "radarr-url" "" }}
     {{ $sonarrUrl := .Options.StringOr "sonarr-url" "" }}
     {{ $radarrKey := .Options.StringOr "radarr-key" "" }}
@@ -21,8 +25,8 @@
     {{ $startDate := offsetNow (printf "-%dh" $startIntervalH) | formatTime "2006-01-02T15:04:05" }}
     {{ $endDate := offsetNow (printf "+%dh" $intervalH) | formatTime "2006-01-02T15:04:05" }}
 
-    {{ $radarrReq := printf "%s/api/v3/calendar?start=%s&end=%s" $radarrUrl $startDate $endDate }}
-    {{ $sonarrReq := printf "%s/api/v3/calendar?includeSeries=true&start=%s&end=%s" $sonarrUrl $now $endDate }}
+    {{ $radarrReq := printf "%s/api/v3/calendar?start=%s&end=%s" $radarrBaseUrl $startDate $endDate }}
+    {{ $sonarrReq := printf "%s/api/v3/calendar?includeSeries=true&start=%s&end=%s" $sonarrBaseUrl $now $endDate }}
 
     {{ $radarrData := newRequest $radarrReq
       | withHeader "Accept" "application/json"
@@ -57,7 +61,7 @@
             {{ $title := .String "title" }}
             {{ $id := .Int "id" }}
             {{ $titleSlug := .String "titleSlug" }}
-            {{ $coverUrl := printf "%s/api/v3/mediacover/%d/poster-500.jpg?apikey=%s" $radarrUrl $id $radarrKey }}
+            {{ $coverUrl := printf "%s/api/v3/mediacover/%d/poster-500.jpg?apikey=%s" $radarrBaseUrl $id $radarrKey }}
             {{ $link := printf "%s/movie/%s" $radarrUrl $titleSlug }}
             {{ $dateStr := $digitalRelease | parseTime "RFC3339" | formatTime "Mon, 2-Jan" }}
 
@@ -91,7 +95,7 @@
 
         {{ range $sonarrData.JSON.Array "" | sortByTime "airDateUtc" "rfc3339" "asc" }}
           {{ $seriesId := .Int "seriesId" }}
-          {{ $coverUrl := printf "%s/api/v3/mediacover/%d/poster-500.jpg?apikey=%s" $sonarrUrl $seriesId $sonarrKey }}
+          {{ $coverUrl := printf "%s/api/v3/mediacover/%d/poster-500.jpg?apikey=%s" $sonarrBaseUrl $seriesId $sonarrKey }}
           {{ $title := "" }}
           {{ if .Exists "series.title" }}
             {{ $title = .String "series.title" }}

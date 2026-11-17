@@ -100,15 +100,15 @@ pages:
               - title: Jellyfin
                 url: https://jelly.${BASE_HOST}/
                 icon: sh:jellyfin
-              - title: Seerr
-                url: https://seerr.${BASE_HOST}/
-                icon: sh:seerr
-              - title: StreamyStats
-                url: https://sst.esh.redvelo.city
-                icon: sh:streamystats
               - title: Prismarr
                 url: https://prismarr.${BASE_HOST}/
                 icon: sh:mediamanager
+              - title: StreamyStats
+                url: https://sst.esh.redvelo.city
+                icon: sh:streamystats
+              - title: Bentopdf
+                url: https://bento.${BASE_HOST}/
+                icon: sh:bentopdf
               - title: Radarr
                 url: https://rad.${BASE_HOST}/
                 icon: sh:radarr
