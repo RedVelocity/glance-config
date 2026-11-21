@@ -133,9 +133,8 @@
             {{ end }}
 
             <div class="card widget-content-frame">
-              <img src="{{ $thumbURL | safeURL }}"
+              <img src="{{ secureImageURL $thumbURL }}"
                 alt="{{ $title }}"
-                loading="lazy"
                 style="
                   object-fit: cover;
                   border-radius: var(--border-radius) var(--border-radius) 0 0;

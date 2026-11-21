@@ -1,31 +1,42 @@
+/* ============================================================
+   Font
+   ============================================================ */
+
 @font-face {
   font-family: 'Outfit';
   src:
     url('/assets/fonts/Outfit-VariableFont_wght.ttf')
       format('truetype-variations'),
     url('/assets/fonts/Outfit-VariableFont_wght.ttf') format('truetype');
-  font-weight: 100 900; /* Define the supported range */
+  font-weight: 100 900; /* Supported weight range */
   font-style: normal;
   font-display: swap;
 }
 
+/* ============================================================
+   Variables
+   ============================================================ */
+
 :root {
+  /* Layout */
   --border-radius: 12px;
-  --color-info: #a78bfa;
+
+  /* Colors */
+  --color-info: #b391e9;
   --color-warning: hsl(43, 50%, 70%);
-  --color-primary: #a78bfa;
-  --color-popover-border: #a78bfa;
+  --color-primary: #b391e9;
+  --color-popover-border: #b391e9;
   --color-background: #050e1e;
-  /* Widget background: derived from --color-background itself via
-     relative color syntax (hsl(from <color> h s l / a)) — pulls the
-     hue/saturation/lightness out of the hex value at compute time,
-     so there's only one color to maintain. --bga controls opacity. */
+
+  /* Widget background: derived from --color-background via relative
+     color syntax (hsl(from <color> h s l / a)), so there's only one
+     color to maintain. --bga controls opacity. */
   --bga: 45%;
   --color-widget-background: hsl(
     from var(--color-background) h s l / var(--bga)
   );
 
-  /* glass */
+  /* Glass */
   --g-dim: 0.62; /* set by dim-control.js */
   --glass:
     linear-gradient(
@@ -47,21 +58,26 @@
       rgba(255, 255, 255, 0.09) 100%
     );
   --blur: url(#glass-filter-desktop) blur(20px) saturate(170%);
+  --blur-light: blur(10px);
   --edge: rgba(255, 255, 255, 0.048);
   --shine:
     inset 0 1px 0 rgba(255, 255, 255, 0.22),
     inset 0 -1px 0 rgba(255, 255, 255, 0.05);
-  --shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  --shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
   --sep: rgba(255, 255, 255, 0.08);
 }
+
+/* ============================================================
+   Base
+   ============================================================ */
 
 * {
   box-sizing: border-box;
 }
 
 /* The SVG filter defs get injected raw into <body> via document.head
-   in glance-config.yml. It has no intrinsic reason to take up layout
-   space, so pull it out of flow entirely. */
+   in glance-config.yml. They have no reason to take up layout space,
+   so pull them out of flow entirely. */
 .glass-surface__filter {
   position: absolute;
   width: 0;
@@ -72,62 +88,81 @@
 
 body {
   font-family: 'Outfit', sans-serif;
-  background-image: url('/assets/images/bg.jpg');
-  /* background-image: url('https://i.redd.it/ul37zchdgfeh1.jpeg'); */
+  background-color: var(--color-background);
   overflow-y: auto;
-  /* background-repeat: no-repeat; */
-  background-size: cover;
-  background-attachment: fixed;
-  background-blend-mode: difference;
 }
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: -30px; /* Oversize so the blurred edges don't show */
+  z-index: -1;
+  background-image: url('/assets/images/bg.png');
+  background-size: cover;
+  background-position: center;
+  filter: saturate(1.2) brightness(0.7);
+  pointer-events: none;
+}
+
+/* ============================================================
+   Utilities
+   ============================================================ */
+
 .color-info {
   color: var(--color-info);
 }
+
 .color-warning {
   color: var(--color-warning);
 }
 
+.color-primary-if-not-visited:link,
+.color-primary-if-not-visited:visited {
+  color: var(--color-primary) !important;
+}
+
 /* ============================================================
-   Widget background + liquid glass
+   Widgets + liquid glass
    ============================================================ */
 
+/* Shared glass surface. Blur strength comes from --surface-blur,
+   which defaults to --blur and can be overridden per element. */
 .widget-content:not(.widget-content-frameless),
-.widget-content-frame {
+.widget-content-frame,
+.widget-title-wrapper {
   background: var(--glass);
-  -webkit-backdrop-filter: var(--blur);
-  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--surface-blur, var(--blur));
+  backdrop-filter: var(--surface-blur, var(--blur));
   border: 1px solid var(--edge);
   border-radius: var(--border-radius);
   box-shadow: var(--shine), var(--shadow);
 }
+
 .widget-header {
   padding: 0px;
 }
-.widget-header h2 {
-  text-transform: none !important;
-}
+
 .expand-toggle-button {
   background: none;
 }
 
 .widget-title-wrapper {
+  --surface-blur: var(--blur-light);
   position: relative;
   display: inline-flex;
   padding: 2px 10px;
-  border-radius: var(--border-radius);
-  background: var(--glass);
-  backdrop-filter: blur(10px) saturate(1.05);
-  -webkit-backdrop-filter: blur(10px) saturate(1.05);
-}
-.widget-title-wrapper span {
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  box-shadow: var(--shine);
 }
 
-/* CUSTOM RULES FOR MY TASTE */
+/* ============================================================
+   Custom rules
+   ============================================================ */
+
 /* Remove carousel fade effect */
 .carousel-container::before,
 .carousel-container::after {
   display: none;
+  background: none;
 }
 
 /* Make DNS widget same height */
@@ -136,10 +171,12 @@ body {
   display: flex;
   flex-direction: column;
 }
+
 .widget-type-dns-stats .widget-content {
   height: 100%;
   flex: 1;
 }
+
 .widget-type-dns-stats .widget-content .dns-stats {
   height: 100%;
   display: flex;
@@ -147,14 +184,12 @@ body {
   justify-content: space-around;
 }
 
-.color-primary-if-not-visited:link,
-.color-primary-if-not-visited:visited {
-  color: var(--color-primary) !important;
+/* Disabled rules
+.widget-type-split-column .widget-content {
+  background: none;
 }
 
-/* .widget-type-split-column .widget-content {
-  background: none;
-} */
-/* .widget-type-prowlarr-custom .widget-content {
+.widget-type-prowlarr-custom .widget-content {
   height: calc(100% - var(--widget-gap));
-} */
+}
+*/
