@@ -66,26 +66,25 @@
         <ul class="prowlarr-indexers list list-gap-10 collapsible-container" data-collapse-after="{{ $collapseAfter }}">
 
           {{ range $indexers }}
-            {{ $indexerId := .Int "id" }}
-            {{ $isEnabled := .String "enable" }}
-            {{ $indexerName := .String "name" }}
-            
-            {{/* Find matching status for this indexer */}}
-            {{ $isDisabled := false }}
-            {{ range $statuses }}
-              {{ if eq (.Int "indexerId") $indexerId }}
-                {{ $disabledTill := .String "disabledTill" }}
-                {{ if ne $disabledTill "" }}
-                  {{ $isDisabled = true }}
+            {{ if .Bool "enable" }}
+              {{ $indexerId := .Int "id" }}
+              {{ $indexerName := .String "name" }}
+              {{ $privacy := .String "privacy" }}
+
+              {{/* Temporarily disabled check from /indexerstatus */}}
+              {{ $isTempDisabled := false }}
+              {{ range $statuses }}
+                {{ if eq (.Int "indexerId") $indexerId }}
+                  {{ if ne (.String "disabledTill") "" }}
+                    {{ $isTempDisabled = true }}
+                  {{ end }}
                 {{ end }}
               {{ end }}
-            {{ end }}
-      
-            <li class="flex items-center gap-12 prowlarr-index-item">
-              <a href="{{ $url }}" target="_blank" class="size-title-dynamic color-highlight text-truncate block grow">{{ $indexerName }}</a>
-              <span>{{ .String "privacy" }}</span>
-              {{ if eq $isEnabled "true" }}
-                {{ if $isDisabled }}
+
+              <li class="flex items-center gap-12 prowlarr-index-item">
+                <a href="{{ $url }}" target="_blank" class="size-title-dynamic color-highlight text-truncate block grow">{{ $indexerName }}</a>
+                <span>{{ $privacy }}</span>
+                {{ if $isTempDisabled }}
                   <div class="margin-left-auto shrink-0" data-popover-type="text" data-popover-position="above" data-popover-text="Temporarily Unavailable" aria-label="Temporarily Unavailable">
                     <div class="monitor-site-status-icon-compact" title="Temporarily Unavailable">
                       <svg fill="var(--color-warning)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -102,16 +101,8 @@
                     </div>
                   </div>
                 {{ end }}
-              {{ else }}
-                <div class="margin-left-auto shrink-0" data-popover-type="text" data-popover-position="above" data-popover-text="Disabled" aria-label="Disabled">
-                  <div class="monitor-site-status-icon-compact" title="Disabled">
-                    <svg fill="var(--color-negative)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM8.28 7.22a.75.75 0 0 0-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 1 0 1.06 1.06L10 11.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L11.06 10l1.72-1.72a.75.75 0 0 0-1.06-1.06L10 8.94 8.28 7.22Z" clip-rule="evenodd"></path>
-                    </svg>
-                  </div>
-                </div>
-              {{ end }}
-            </li>
+              </li>
+            {{ end }}
           {{ end }}
 
         </ul>
